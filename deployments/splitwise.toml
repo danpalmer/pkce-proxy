@@ -8,7 +8,7 @@ primary_region = "lhr"
 
 [build]
 
-[build.http_service]
+[http_service]
 internal_port = 5000
 force_https = true
 auto_stop_machines = true
@@ -16,7 +16,7 @@ auto_start_machines = true
 min_machines_running = 0
 processes = ["app"]
 
-[[build.vm]]
+[[vm]]
 cpu_kind = "shared"
 cpus = 1
 memory_mb = 256
