@@ -5,7 +5,7 @@ import {
   CLIENT_SECRET,
   PROXY_REDIRECT_URL,
   JSON_OR_FORM,
-} from "../constants";
+} from "../env";
 
 export default async function token(req: FastifyRequest, res: FastifyReply) {
   const { code_verifier, client_id, code, ...extra } = req.body as any;

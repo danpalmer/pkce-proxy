@@ -4,7 +4,7 @@ import type {
   HookHandlerDoneFunction,
 } from "fastify";
 
-import { IS_PROD } from "./constants";
+import { IS_PROD } from "./env";
 
 export default function addSecurityHeaders(
   req: FastifyRequest,

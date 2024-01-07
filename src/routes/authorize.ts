@@ -1,6 +1,6 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
 import { add } from "../sessions";
-import { AUTHORIZE_URL, PROXY_REDIRECT_URL } from "../constants";
+import { AUTHORIZE_URL, PROXY_REDIRECT_URL } from "../env";
 
 export default async function authorize(
   req: FastifyRequest,
