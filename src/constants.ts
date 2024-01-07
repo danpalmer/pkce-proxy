@@ -34,3 +34,5 @@ if (JSON_OR_FORM !== "json" && JSON_OR_FORM !== "form") {
     "JSON_OR_FORM env variable has to be either `json` or `form`"
   );
 }
+
+export const IS_PROD = process.env.NODE_ENV?.startsWith("prod") || false;
