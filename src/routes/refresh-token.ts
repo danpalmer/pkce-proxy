@@ -5,7 +5,7 @@ import {
   CLIENT_SECRET,
   JSON_OR_FORM,
   PROXY_REDIRECT_URL,
-} from "./constants";
+} from "../constants";
 
 export default async function refresh_token(
   req: FastifyRequest,

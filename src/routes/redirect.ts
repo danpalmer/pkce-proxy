@@ -1,5 +1,5 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
-import { findByState } from "./sessions";
+import { findByState } from "../sessions";
 
 export default async function redirect(req: FastifyRequest, res: FastifyReply) {
   const { code, state, ...extra } = req.query as Record<string, string>;

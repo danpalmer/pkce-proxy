@@ -1,9 +1,10 @@
 import fastify from "fastify";
 
-import authorize from "./src/authorize";
-import token from "./src/token";
-import refreshToken from "./src/refresh-token";
-import redirect from "./src/redirect";
+import authorize from "./src/routes/authorize";
+import token from "./src/routes/token";
+import refreshToken from "./src/routes/refresh-token";
+import redirect from "./src/routes/redirect";
+import index from "./src/routes/index";
 
 const PORT = parseInt(process.env.PORT || "5000");
 const HOST = process.env.HOST || "0.0.0.0";
