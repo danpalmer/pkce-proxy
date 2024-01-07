@@ -4,7 +4,7 @@ import type {
   HookHandlerDoneFunction,
 } from "fastify";
 
-import { IS_PROD } from "./env";
+import { ENVIRONMENT } from "./env";
 
 export default function addSecurityHeaders(
   req: FastifyRequest,
@@ -12,13 +12,16 @@ export default function addSecurityHeaders(
   done: HookHandlerDoneFunction
 ) {
   // If prod and not HTTPs, redirect and end.
-  if (IS_PROD && req.headers["x-forwarded-proto"] !== "https") {
+  if (
+    ENVIRONMENT === "production" &&
+    req.headers["x-forwarded-proto"] !== "https"
+  ) {
     res.redirect(302, "https://" + req.hostname + req.originalUrl);
     return done();
   }
 
   // If prod, enable HSTS so that this only ever works on HTTPS.
-  if (IS_PROD) {
+  if (ENVIRONMENT === "production") {
     res.header(
       "Strict-Transport-Security",
       "max-age=31536000; includeSubDomains"

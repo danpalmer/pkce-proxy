@@ -35,6 +35,19 @@ if (JSON_OR_FORM !== "json" && JSON_OR_FORM !== "form") {
   );
 }
 
-export const IS_PROD = process.env.NODE_ENV?.startsWith("prod") || false;
+export const ENVIRONMENT = (process.env.NODE_ENV || "development") as
+  | "development"
+  | "production"
+  | "test";
+if (
+  ENVIRONMENT !== "development" &&
+  ENVIRONMENT !== "production" &&
+  ENVIRONMENT !== "test"
+) {
+  throw new Error(
+    "ENVIRONMENT env variable has to be either `development`, `production` or `test`"
+  );
+}
+
 export const PORT = parseInt(process.env.PORT || "5000");
 export const HOST = process.env.HOST || "0.0.0.0";

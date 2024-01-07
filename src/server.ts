@@ -6,9 +6,24 @@ import refreshToken from "./routes/refresh-token";
 import redirect from "./routes/redirect";
 import index from "./routes/index";
 import addSecurityHeaders from "./hooks";
-import { HOST, PORT } from "./env";
+import { HOST, PORT, ENVIRONMENT } from "./env";
 
-const server = fastify();
+const loggers = {
+  development: {
+    transport: {
+      target: "pino-pretty",
+      level: "debug",
+      options: {
+        translateTime: "HH:MM:ss Z",
+        ignore: "pid,hostname",
+      },
+    },
+  },
+  production: true,
+  test: false,
+};
+
+const server = fastify({ logger: loggers[ENVIRONMENT] || true });
 
 server
   .addHook("onRequest", addSecurityHeaders)
@@ -21,7 +36,6 @@ server
 export async function start() {
   try {
     await server.listen({ port: PORT, host: HOST });
-    console.log(`started listening on ${HOST}:${PORT}`);
   } catch (err) {
     console.error(err);
     server.log.error(err);
