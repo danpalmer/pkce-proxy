@@ -11,6 +11,10 @@ type Session = {
 
 const sessions: Record<string, Session> = {};
 
+export function hasSessions(): boolean {
+  return Object.keys(sessions).length > 0;
+}
+
 export function add(
   client_id: any,
   redirect_uri: any,

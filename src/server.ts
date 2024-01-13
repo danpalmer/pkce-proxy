@@ -7,6 +7,7 @@ import redirect from "./routes/redirect";
 import index from "./routes/index";
 import addSecurityHeaders from "./hooks";
 import { HOST, PORT, ENVIRONMENT } from "./env";
+import { hasSessions } from "./sessions";
 
 const loggers = {
   development: {
@@ -41,4 +42,14 @@ export async function start() {
     server.log.error(err);
     process.exit(1);
   }
+
+  process.on("SIGINT", async function () {
+    server.log.info("Exiting...");
+    while (hasSessions()) {
+      server.log.info("Waiting for sessions to be cleared");
+      await new Promise((r) => setTimeout(r, 3000));
+    }
+    server.close();
+    process.exit(0);
+  });
 }
