@@ -1,13 +1,10 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
 import { find, consume } from "../sessions";
-import {
-  TOKEN_URL,
-  CLIENT_SECRET,
-  PROXY_REDIRECT_URL,
-  JSON_OR_FORM,
-} from "../env";
+import { PROXY_REDIRECT_URL } from "../env";
+import { getConfig } from "../client-config";
 
 export default async function token(req: FastifyRequest, res: FastifyReply) {
+  const clientConfig = getConfig(req);
   const { code_verifier, client_id, code, ...extra } = req.body as any;
 
   const session = find(code, code_verifier);
@@ -21,12 +18,12 @@ export default async function token(req: FastifyRequest, res: FastifyReply) {
 
   let options: RequestInit = {};
 
-  if (JSON_OR_FORM === "json") {
+  if (clientConfig.jsonOrForm === "json") {
     let body: string;
     try {
       body = JSON.stringify({
         client_id,
-        client_secret: CLIENT_SECRET,
+        client_secret: clientConfig.clientSecret,
         code,
         ...extra,
         redirect_uri: PROXY_REDIRECT_URL,
@@ -40,17 +37,17 @@ export default async function token(req: FastifyRequest, res: FastifyReply) {
     options = {
       headers: {
         Authorization: `Basic ${Buffer.from(
-          `${client_id}:${CLIENT_SECRET}`
+          `${client_id}:${clientConfig.clientSecret}`
         ).toString("base64")}`,
         "Content-Type": "application/json",
         Accept: "application/json",
       },
       body,
     };
-  } else if (JSON_OR_FORM === "form") {
+  } else {
     const body = new URLSearchParams();
     body.append("client_id", client_id);
-    body.append("client_secret", CLIENT_SECRET);
+    body.append("client_secret", clientConfig.clientSecret);
     body.append("code", code);
     Object.keys(extra).forEach((k) => {
       body.append(k, extra[k]);
@@ -66,7 +63,7 @@ export default async function token(req: FastifyRequest, res: FastifyReply) {
     };
   }
 
-  const response = await fetch(TOKEN_URL, {
+  const response = await fetch(clientConfig.tokenUrl, {
     method: "POST",
     ...options,
   });

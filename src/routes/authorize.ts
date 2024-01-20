@@ -1,11 +1,14 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
 import { add } from "../sessions";
-import { AUTHORIZE_URL, PROXY_REDIRECT_URL } from "../env";
+import { PROXY_REDIRECT_URL } from "../env";
+import { getConfig } from "../client-config";
 
 export default async function authorize(
   req: FastifyRequest,
   res: FastifyReply
 ) {
+  const clientConfig = getConfig(req);
+
   const {
     client_id,
     redirect_uri,
@@ -28,5 +31,5 @@ export default async function authorize(
   });
   params.set("redirect_uri", PROXY_REDIRECT_URL);
 
-  return res.redirect(307, `${AUTHORIZE_URL}?${params.toString()}`);
+  return res.redirect(307, `${clientConfig.authorizeUrl}?${params.toString()}`);
 }

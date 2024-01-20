@@ -36,10 +36,10 @@ server.register(fastifyStatic, {
 server
   .addHook("onRequest", addSecurityHeaders)
   .get("/", index)
-  .get("/authorize", authorize)
-  .get("/redirect", redirect)
-  .post("/token", token)
-  .post("/refresh-token", refreshToken);
+  .get("/:clientToken/authorize", authorize)
+  .get("/:clientToken/redirect", redirect)
+  .post("/:clientToken/token", token)
+  .post("/:clientToken/refresh-token", refreshToken);
 
 export async function start() {
   try {

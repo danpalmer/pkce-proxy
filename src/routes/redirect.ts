@@ -1,4 +1,5 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
+
 import { findByState } from "../sessions";
 
 export default async function redirect(req: FastifyRequest, res: FastifyReply) {
