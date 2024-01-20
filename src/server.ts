@@ -42,14 +42,4 @@ export async function start() {
     server.log.error(err);
     process.exit(1);
   }
-
-  process.on("SIGINT", async function () {
-    server.log.info("Exiting...");
-    while (hasSessions()) {
-      server.log.info("Waiting for sessions to be cleared");
-      await new Promise((r) => setTimeout(r, 3000));
-    }
-    server.close();
-    process.exit(0);
-  });
 }
