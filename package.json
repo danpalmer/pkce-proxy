@@ -8,8 +8,7 @@
   },
   "scripts": {
     "start": "node .",
-    "build": "tsc",
-    "codegen": "pbjs --path proto --target static-module --out src/proto/index.js --es6 proto/**/*.proto && pbts --out src/proto/index.d.ts src/proto/index.js"
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +20,7 @@
     "typescript": "^5.1.6"
   },
   "dependencies": {
+    "@deliberative/crypto": "^1.0.8",
     "fastify": "^4.22.2",
     "protobufjs": "~7.2.5"
   }

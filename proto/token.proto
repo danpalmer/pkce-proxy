@@ -1,3 +1,0 @@
-message Foo {
-    optional string test = 1;
-}
