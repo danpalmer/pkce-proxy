@@ -13,7 +13,7 @@ export default async function refresh_token(
 
   let options: RequestInit = {};
 
-  if (clientConfig.jsonOrForm === "json") {
+  if (clientConfig.dataType === "json") {
     options = {
       headers: {
         "Content-Type": "application/json",

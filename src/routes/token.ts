@@ -18,7 +18,7 @@ export default async function token(req: FastifyRequest, res: FastifyReply) {
 
   let options: RequestInit = {};
 
-  if (clientConfig.jsonOrForm === "json") {
+  if (clientConfig.dataType === "json") {
     let body: string;
     try {
       body = JSON.stringify({

@@ -9,7 +9,7 @@ export interface ClientConfig {
   authorizeUrl: string;
   tokenUrl: string;
   refreshTokenUrl?: string;
-  jsonOrForm?: "json" | "form";
+  dataType?: "json" | "form";
 }
 
 const encoder = new TextEncoder();

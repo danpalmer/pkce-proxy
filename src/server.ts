@@ -1,5 +1,6 @@
 import fastify from "fastify";
 import fastifyStatic from "@fastify/static";
+import fastifyFormBody from "@fastify/formbody";
 import path from "path";
 
 import authorize from "./routes/authorize";
@@ -7,9 +8,9 @@ import token from "./routes/token";
 import refreshToken from "./routes/refresh-token";
 import redirect from "./routes/redirect";
 import index from "./routes/index";
+import createConfig from "./routes/create-config";
 import addSecurityHeaders from "./hooks";
 import { HOST, PORT, ENVIRONMENT } from "./env";
-import { hasSessions } from "./sessions";
 
 const loggers = {
   development: {
@@ -33,9 +34,13 @@ server.register(fastifyStatic, {
   prefix: "/public/",
 });
 
+server.register(fastifyFormBody);
+
+server.addHook("onRequest", addSecurityHeaders);
+
 server
-  .addHook("onRequest", addSecurityHeaders)
   .get("/", index)
+  .post("/create-config", createConfig)
   .get("/:clientToken/authorize", authorize)
   .get("/:clientToken/redirect", redirect)
   .post("/:clientToken/token", token)

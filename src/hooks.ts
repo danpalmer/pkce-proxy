@@ -31,7 +31,7 @@ export default function addSecurityHeaders(
   // Basic security headers to ensure we're not being misused
   res.header(
     "Content-Security-Policy",
-    "default-src 'none'; base-uri 'none'; object-src 'none'; form-action 'none'; frame-ancestors 'none'; require-trusted-types-for 'script'; style-src 'self'"
+    "default-src 'none'; base-uri 'none'; object-src 'none'; form-action 'self'; frame-ancestors 'none'; require-trusted-types-for 'script'; style-src 'self' 'unsafe-inline'"
   );
   res.header("X-Content-Type-Options", "nosniff");
   res.header("X-Frame-Options", "DENY");
