@@ -1,4 +1,6 @@
 import fastify from "fastify";
+import fastifyStatic from "@fastify/static";
+import path from "path";
 
 import authorize from "./routes/authorize";
 import token from "./routes/token";
@@ -25,6 +27,11 @@ const loggers = {
 };
 
 const server = fastify({ logger: loggers[ENVIRONMENT] || true });
+
+server.register(fastifyStatic, {
+  root: path.join(__dirname, "..", "public"),
+  prefix: "/public/",
+});
 
 server
   .addHook("onRequest", addSecurityHeaders)
