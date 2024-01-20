@@ -2,26 +2,74 @@
 <html>
   <head>
     <title>PKCE Proxy</title>
+    <link rel="stylesheet" href="/public/mvp.css" />
   </head>
   <body>
-    <h1>OAuth PKCE Proxy</h1>
-    <p>
-      This server is required to allow Raycast to connect to services that do
-      not support the PKCE OAuth flow (which is the most secure one for
-      applications). Ideally, this proxy should not be needed but until more
-      services get up to speed with the latest security recommendations, this is
-      the state that we are in.
-    </p>
-    <p>
-      <b>No data is stored in the server.</b> In fact, it doesn't even have a
-      database.
-    </p>
-    <p>
-      See
-      <a href="https://github.com/mathieudutour/pkce-proxy"
-        >https://github.com/mathieudutour/pkce-proxy</a
-      >
-      for more details.
-    </p>
+    <main>
+      <h1>PKCE Proxy</h1>
+      <section>
+        <p>
+          This server allows client software to connect to services that do not
+          support the PKCE OAuth flow (which is the most secure one for
+          applications). To use it, fill out the form below with the
+          configuration for your OAuth client, and you'll receive a new set of
+          OAuth credentials to use.
+        </p>
+        <p>
+          <b>Secure by default</b>
+        </p>
+        <ul>
+          <li>
+            <em>No user data persisted on the server</em> &mdash; time-limited
+            in-memory session data held until used or expired after a few
+            minutes.
+          </li>
+          <li>
+            <em>No OAuth client data stored on the server</em> &mdash; all
+            configuration is encrypted into a token in your OAuth URLs, not
+            stored or logged, and decrypted as needed on request.
+          </li>
+          <li>
+            <em>No secrets stored in your client-side application</em> &mdash;
+            secret data is AES encrypted with a server-side key and salt, so you
+            can safely distribute your code.
+          </li>
+        </ul>
+      </section>
+      <hr />
+      <form>
+        <label for="clientSecret">Client Secret:</label>
+        <input
+          type="text"
+          id="clientSecret"
+          name="clientSecret"
+          required="required"
+        />
+
+        <label for="authorizeUrl">Authorize URL:</label>
+        <input
+          type="text"
+          id="authorizeUrl"
+          name="authorizeUrl"
+          required="required"
+        />
+
+        <label for="tokenUrl">Token URL:</label>
+        <input type="text" id="tokenUrl" name="tokenUrl" required="required" />
+
+        <label for="refreshTokenUrl">Refresh Token URL:</label>
+        <input type="text" id="refreshTokenUrl" name="refreshTokenUrl" />
+        <small>Optional, defaults to token URL</small>
+
+        <label for="dataType">Request Encoding:</label>
+        <select id="dataType" name="dataType">
+          <option value="form">Form (application/x-www-form-urlencoded)</option>
+          <option value="json">JSON (application/json)</option>
+        </select>
+
+        <br />
+        <button type="submit" id="show">Submit</button>
+      </form>
+    </main>
   </body>
 </html>
