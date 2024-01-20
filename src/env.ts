@@ -51,3 +51,8 @@ if (
 
 export const PORT = parseInt(process.env.PORT || "5000");
 export const HOST = process.env.HOST || "0.0.0.0";
+
+export const SECRET_KEY = process.env.SECRET_KEY as string;
+if (!SECRET_KEY) {
+  throw new Error("SECRET_KEY env variable is not set");
+}
