@@ -24,6 +24,8 @@ export default class MemoryStorage implements SessionStorage {
   delete(state: string): void {
     const session = this.get(state);
     delete this.sessions[state];
-    delete this.codes[session.code];
+    if (session.code) {
+      delete this.codes[session.code];
+    }
   }
 }
