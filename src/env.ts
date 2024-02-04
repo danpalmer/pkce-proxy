@@ -25,3 +25,5 @@ export const SECRET_KEY = process.env.SECRET_KEY as string;
 if (!SECRET_KEY) {
   throw new Error("SECRET_KEY env variable is not set");
 }
+
+export const REDIS_URL = process.env.REDIS_URL;

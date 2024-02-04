@@ -1,19 +1,10 @@
 import crypto from "crypto";
 
-type Session = {
-  client_id: any;
-  redirect_uri: any;
-  state: any;
-  pkce: { code_challenge: any; code_challenge_method: any };
-  code?: any;
-  expiration: number;
-};
+import MemoryStorage from "./storage/memory";
+import { Session } from "./storage/types";
+import { REDIS_URL } from "./env";
 
-const sessions: Record<string, Session> = {};
-
-export function hasSessions(): boolean {
-  return Object.keys(sessions).length > 0;
-}
+const storage = REDIS_URL ? new MemoryStorage() : new MemoryStorage();
 
 export function add(
   client_id: any,
@@ -21,31 +12,35 @@ export function add(
   state: any,
   pkce: { code_challenge: any; code_challenge_method: any }
 ) {
-  sessions[state] = {
+  storage.set(state, {
     client_id,
     redirect_uri,
     pkce,
     state,
     expiration: Date.now() + 500 * 1000,
-  };
+  });
 
   setTimeout(() => {
-    delete sessions[state];
+    storage.delete(state);
   }, 500 * 1000);
 }
 
-export function find(code: any, code_verifier: any) {
+export function addCode(code: string, session: Session) {
+  storage.setCode(code, session);
+}
+
+export function find(code: string, code_verifier: string) {
   if (typeof code_verifier !== "string" || !code) {
     return;
   }
 
-  const candidate = Object.values(sessions).find((x) => x.code === code);
+  const session = storage.get(storage.getCode(code));
 
   if (
-    candidate &&
-    (candidate.pkce.code_challenge_method === "plain"
-      ? candidate.pkce.code_challenge === base64_urlencode(code_verifier)
-      : candidate.pkce.code_challenge ===
+    session &&
+    (session.pkce.code_challenge_method === "plain"
+      ? session.pkce.code_challenge === base64_urlencode(code_verifier)
+      : session.pkce.code_challenge ===
         crypto
           .createHash("sha256")
           .update(code_verifier)
@@ -54,16 +49,16 @@ export function find(code: any, code_verifier: any) {
           .replace(/\//g, "_")
           .replace(/=+$/, ""))
   ) {
-    return candidate;
+    return session;
   }
 }
 
-export function findByState(state: any) {
-  return sessions[state];
+export function findByState(state: string) {
+  return storage.get(state);
 }
 
 export function consume(session: Session) {
-  delete sessions[session.state];
+  storage.delete(session.state);
 }
 
 function base64_urlencode(str: string) {

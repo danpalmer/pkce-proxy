@@ -1,6 +1,6 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
 
-import { findByState } from "../sessions";
+import { findByState, addCode, add } from "../sessions";
 
 export default async function redirect(req: FastifyRequest, res: FastifyReply) {
   const { code, state, ...extra } = req.query as Record<string, string>;
@@ -11,7 +11,7 @@ export default async function redirect(req: FastifyRequest, res: FastifyReply) {
     return res.status(400).send("invalid_state");
   }
 
-  session.code = code;
+  addCode(code, session);
 
   const params = new URLSearchParams();
   params.append("code", code as string);
