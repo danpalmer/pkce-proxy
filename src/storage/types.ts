@@ -1,9 +1,9 @@
 export type Session = {
-  client_id: any;
-  redirect_uri: any;
-  state: any;
-  pkce: { code_challenge: any; code_challenge_method: any };
-  code?: any;
+  client_id: string;
+  redirect_uri: string;
+  state: string;
+  pkce: { code_challenge: string; code_challenge_method: string };
+  code?: string;
   expiration: number;
 };
 

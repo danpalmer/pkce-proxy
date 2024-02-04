@@ -7,10 +7,10 @@ import { REDIS_URL } from "./env";
 const storage = REDIS_URL ? new MemoryStorage() : new MemoryStorage();
 
 export function add(
-  client_id: any,
-  redirect_uri: any,
-  state: any,
-  pkce: { code_challenge: any; code_challenge_method: any }
+  client_id: string,
+  redirect_uri: string,
+  state: string,
+  pkce: { code_challenge: string; code_challenge_method: string }
 ) {
   storage.set(state, {
     client_id,
@@ -30,10 +30,6 @@ export function addCode(code: string, session: Session) {
 }
 
 export function find(code: string, code_verifier: string) {
-  if (typeof code_verifier !== "string" || !code) {
-    return;
-  }
-
   const session = storage.get(storage.getCode(code));
 
   if (
