@@ -17,7 +17,7 @@ const decoder = new TextDecoder();
 
 // Important: dictionary changes will invalidate previously encoded tokens
 const compressionDictionary = Buffer.from(
-  "clientSecret,authorizeUrl,tokenUrl,refreshTokenUrl,dataType,https,com,json,form,www,authorize,refresh,token"
+  "https,clientSecret,authorizeUrl,tokenUrl,refreshTokenUrl,dataType,json,form,authorize,refresh,token,com,www"
 );
 
 export function getConfig(req: FastifyRequest): ClientConfig {

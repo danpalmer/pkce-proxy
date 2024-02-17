@@ -21,7 +21,7 @@ test("request-config", (t) => {
   const req = {
     params: {
       clientToken:
-        "lmbDoAyRz2GbekrRKcU88mIVMsQ7h3tUl2TwqDlsNWH2VzrNnG6TCRFRmLHS06xyVOuIzvMjxZuHR91fjr35WuxttNn5AqADxQE24wz96hGCnN43zmNC%2BYgsN8J60SKnrbN2V5uU10j298WsWWA%3D",
+        "uJa2LwQrRYYvC9%2BbYW3I8MNSLsxXDauV273Ybl0hzdKogJ8PVFOANPX5Iwz3gzsdvQyXQ0VWhWnzZnhkRqXFyITHUjk8aP%2B9aEpnJTHg1UEgN5IoDI9CZmnhk4RztplMXR2SjW2OMYXPc0xXXC0%3D",
     },
   };
 
