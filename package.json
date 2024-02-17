@@ -15,10 +15,12 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@ava/typescript": "^4.1.0",
     "@types/node": "^20.4.5",
     "ava": "^6.1.1",
     "pino-pretty": "^10.3.1",
     "protobufjs-cli": "~1.1.2",
+    "tsimp": "^2.0.11",
     "typescript": "^5.1.6"
   },
   "dependencies": {
@@ -27,5 +29,17 @@
     "@fastify/static": "^6.12.0",
     "fastify": "^4.22.2",
     "protobufjs": "~7.2.5"
+  },
+  "ava": {
+    "extensions": {
+      "ts": "module"
+    },
+    "nodeArguments": [
+      "--import=tsimp"
+    ],
+    "environmentVariables": {
+      "PROXY_HOSTNAME": "test.com",
+      "SECRET_KEY": "abc123"
+    }
   }
 }
