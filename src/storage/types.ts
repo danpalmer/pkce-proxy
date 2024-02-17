@@ -8,8 +8,8 @@ export type Session = {
 };
 
 export interface SessionStorage {
-  get(state: string): Session;
-  getCode(code: string): string;
+  get(state: string): Session | undefined;
+  getCode(code: string): string | undefined;
   set(state: string, session: Session): void;
   setCode(code: string, state: Session): void;
   delete(state: string): void;

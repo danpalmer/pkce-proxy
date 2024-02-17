@@ -1,14 +1,14 @@
 import { Session, SessionStorage } from "./types";
 
 export default class MemoryStorage implements SessionStorage {
-  sessions: Record<string, Session> = {};
-  codes: Record<string, string> = {};
+  sessions: Partial<Record<string, Session>> = {};
+  codes: Partial<Record<string, string>> = {};
 
-  get(state: string): Session {
+  get(state: string): Session | undefined {
     return this.sessions[state];
   }
 
-  getCode(code: string): string {
+  getCode(code: string): string | undefined {
     return this.codes[code];
   }
 
@@ -23,6 +23,9 @@ export default class MemoryStorage implements SessionStorage {
 
   delete(state: string): void {
     const session = this.get(state);
+    if (!session) {
+      return;
+    }
     delete this.sessions[state];
     if (session.code) {
       delete this.codes[session.code];
