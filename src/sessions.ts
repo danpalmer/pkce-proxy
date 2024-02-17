@@ -29,8 +29,11 @@ export function addCode(code: string, session: Session) {
   storage.setCode(code, session);
 }
 
-export function find(code: string, code_verifier: string) {
-  const session = storage.get(storage.getCode(code));
+export function find(code: string, code_verifier: string): Session | undefined {
+  const state = storage.getCode(code);
+  if (!state) return;
+
+  const session = storage.get(state);
 
   if (
     session &&

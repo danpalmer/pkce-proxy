@@ -5,10 +5,16 @@ import { findByState, addCode, add } from "../sessions";
 export default async function redirect(req: FastifyRequest, res: FastifyReply) {
   const { code, state, ...extra } = req.query as Record<string, string>;
 
+  if (!code || !state) {
+    res.status(400);
+    return { error: "missing_required_params" };
+  }
+
   const session = findByState(state);
 
   if (!session) {
-    return res.status(400).send("invalid_state");
+    res.status(400);
+    return { error: "invalid_grant" };
   }
 
   addCode(code, session);

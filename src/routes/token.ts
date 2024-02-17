@@ -69,6 +69,5 @@ export default async function token(req: FastifyRequest, res: FastifyReply) {
   });
 
   res.status(response.status);
-
   return response.json();
 }

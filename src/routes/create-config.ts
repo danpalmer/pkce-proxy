@@ -17,7 +17,8 @@ export default function createConfig(req: FastifyRequest, res: FastifyReply) {
     !form.tokenUrl ||
     (form.dataType != "json" && form.dataType != "form" && form.dataType)
   ) {
-    return res.status(400);
+    res.status(400);
+    return { error: "missing_required_params" };
   }
 
   const config = {

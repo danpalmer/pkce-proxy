@@ -18,6 +18,17 @@ export default async function authorize(
     ...extra
   } = req.query as Record<string, string>;
 
+  if (
+    !client_id ||
+    !state ||
+    !redirect_uri ||
+    !code_challenge ||
+    !code_challenge_method
+  ) {
+    res.status(400);
+    return { error: "missing_required_params" };
+  }
+
   add(client_id, redirect_uri, state, {
     code_challenge,
     code_challenge_method,
@@ -27,7 +38,7 @@ export default async function authorize(
   params.append("client_id", client_id);
   params.append("state", state);
   Object.keys(extra).forEach((k) => {
-    params.append(k, extra[k]);
+    params.append(k, extra[k] as string);
   });
   params.set("redirect_uri", PROXY_REDIRECT_URL);
 
