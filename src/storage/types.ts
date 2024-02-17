@@ -8,9 +8,9 @@ export type Session = {
 };
 
 export interface SessionStorage {
-  get(state: string): Session | undefined;
-  getCode(code: string): string | undefined;
-  set(state: string, session: Session): void;
-  setCode(code: string, state: Session): void;
-  delete(state: string): void;
+  get(state: string): Promise<Session | undefined>;
+  getCode(code: string): Promise<string | undefined>;
+  set(state: string, session: Session): Promise<void>;
+  setCode(code: string, state: Session): Promise<void>;
+  delete(state: string): Promise<void>;
 }

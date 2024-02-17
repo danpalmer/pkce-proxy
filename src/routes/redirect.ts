@@ -10,14 +10,14 @@ export default async function redirect(req: FastifyRequest, res: FastifyReply) {
     return { error: "missing_required_params" };
   }
 
-  const session = findByState(state);
+  const session = await findByState(state);
 
   if (!session) {
     res.status(400);
     return { error: "invalid_grant" };
   }
 
-  addCode(code, session);
+  await addCode(code, session);
 
   const params = new URLSearchParams();
   params.append("code", code as string);

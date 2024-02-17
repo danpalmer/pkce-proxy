@@ -4,25 +4,25 @@ export default class MemoryStorage implements SessionStorage {
   sessions: Partial<Record<string, Session>> = {};
   codes: Partial<Record<string, string>> = {};
 
-  get(state: string): Session | undefined {
-    return this.sessions[state];
+  async get(state: string): Promise<Session | undefined> {
+    return Promise.resolve(this.sessions[state]);
   }
 
-  getCode(code: string): string | undefined {
-    return this.codes[code];
+  async getCode(code: string): Promise<string | undefined> {
+    return Promise.resolve(this.codes[code]);
   }
 
-  set(state: string, session: Session): void {
+  async set(state: string, session: Session) {
     this.sessions[state] = session;
   }
 
-  setCode(code: string, session: Session): void {
+  async setCode(code: string, session: Session) {
     this.codes[code] = session.state;
     this.sessions[session.state] = { ...session, code: code };
   }
 
-  delete(state: string): void {
-    const session = this.get(state);
+  async delete(state: string) {
+    const session = await this.get(state);
     if (!session) {
       return;
     }

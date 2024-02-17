@@ -1,18 +1,19 @@
 import crypto from "crypto";
 
 import MemoryStorage from "./storage/memory";
+import RedisStorage from "./storage/redis";
 import { Session } from "./storage/types";
 import { REDIS_URL } from "./env";
 
-const storage = REDIS_URL ? new MemoryStorage() : new MemoryStorage();
+const storage = REDIS_URL ? new RedisStorage(REDIS_URL) : new MemoryStorage();
 
-export function add(
+export async function add(
   client_id: string,
   redirect_uri: string,
   state: string,
   pkce: { code_challenge: string; code_challenge_method: string }
 ) {
-  storage.set(state, {
+  await storage.set(state, {
     client_id,
     redirect_uri,
     pkce,
@@ -20,20 +21,23 @@ export function add(
     expiration: Date.now() + 500 * 1000,
   });
 
-  setTimeout(() => {
-    storage.delete(state);
+  setTimeout(async () => {
+    await storage.delete(state);
   }, 500 * 1000);
 }
 
-export function addCode(code: string, session: Session) {
-  storage.setCode(code, session);
+export async function addCode(code: string, session: Session) {
+  await storage.setCode(code, session);
 }
 
-export function find(code: string, code_verifier: string): Session | undefined {
-  const state = storage.getCode(code);
+export async function find(
+  code: string,
+  code_verifier: string
+): Promise<Session | undefined> {
+  const state = await storage.getCode(code);
   if (!state) return;
 
-  const session = storage.get(state);
+  const session = await storage.get(state);
 
   if (
     session &&
@@ -52,12 +56,12 @@ export function find(code: string, code_verifier: string): Session | undefined {
   }
 }
 
-export function findByState(state: string) {
-  return storage.get(state);
+export async function findByState(state: string): Promise<Session | undefined> {
+  return await storage.get(state);
 }
 
-export function consume(session: Session) {
-  storage.delete(session.state);
+export async function consume(session: Session) {
+  await storage.delete(session.state);
 }
 
 function base64_urlencode(str: string) {

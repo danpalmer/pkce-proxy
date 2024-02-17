@@ -7,14 +7,14 @@ export default async function token(req: FastifyRequest, res: FastifyReply) {
   const clientConfig = getConfig(req);
   const { code_verifier, client_id, code, ...extra } = req.body as any;
 
-  const session = find(code, code_verifier);
+  const session = await find(code, code_verifier);
 
   if (!session) {
     res.status(400);
     return { error: "invalid_grant" };
   }
 
-  consume(session);
+  await consume(session);
 
   let options: RequestInit = {};
 

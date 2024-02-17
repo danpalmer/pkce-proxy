@@ -29,7 +29,7 @@ export default async function authorize(
     return { error: "missing_required_params" };
   }
 
-  add(client_id, redirect_uri, state, {
+  await add(client_id, redirect_uri, state, {
     code_challenge,
     code_challenge_method,
   });
