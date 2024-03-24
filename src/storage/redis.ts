@@ -18,13 +18,13 @@ export default class RedisStorage implements SessionStorage {
   async get(state: string): Promise<Session | undefined> {
     const client = await this.client;
     const data = await client.get(`session:${state}`);
-    return data && JSON.parse(data);
+    return (data && JSON.parse(data)) || undefined;
   }
 
   async getCode(code: string): Promise<string | undefined> {
     const client = await this.client;
-    const state = client.get(`code:${code}`);
-    return state && state.toString();
+    const state = await client.get(`code:${code}`);
+    return (state && state.toString()) || undefined;
   }
 
   async set(state: string, session: Session) {

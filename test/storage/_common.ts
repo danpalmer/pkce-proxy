@@ -1,57 +1,71 @@
 import test from "ava";
+import { randomUUID } from "crypto";
 
-import { SessionStorage } from "../../src/storage/types";
+import { SessionStorage } from "../../src/storage/types.ts";
 
 export default function testStorage(storage: SessionStorage) {
-  const testSession = {
-    client_id: "test-client-id",
-    redirect_uri: "test-redirect-uri",
-    state: "test-state",
-    pkce: {
-      code_challenge: "test-code-challenge",
-      code_challenge_method: "test-code-challenge-method",
-    },
-    expiration: 0,
-  };
-
   test("get-empty", async (t) => {
-    t.is(await storage.get("missing"), undefined);
+    const missingKey = randomUUID();
+    t.is(await storage.get(missingKey), undefined);
   });
 
   test("get-and-set-state", async (t) => {
-    await storage.set("test-state", testSession);
-    t.deepEqual(await storage.get("test-state"), testSession);
+    const testStateKey = randomUUID();
+    const session = testSession(testStateKey);
+    await storage.set(testStateKey, session);
+    t.deepEqual(await storage.get(testStateKey), session);
   });
 
   test("delete-missing", async (t) => {
-    await storage.delete("missing");
-    t.is(await storage.get("missing"), undefined);
+    const missingKey = randomUUID();
+    await storage.delete(missingKey);
+    t.is(await storage.get(missingKey), undefined);
   });
 
   test("delete-state", async (t) => {
-    await storage.set("test-state", testSession);
-    t.not(await storage.get("test-state"), undefined);
-    await storage.delete("test-state");
-    t.is(await storage.get("test-state"), undefined);
+    const testStateKey = randomUUID();
+    const session = testSession(testStateKey);
+    await storage.set(testStateKey, session);
+    t.not(await storage.get(testStateKey), undefined);
+    await storage.delete(testStateKey);
+    t.is(await storage.get(testStateKey), undefined);
   });
 
   test("get-empty-code", async (t) => {
-    t.is(await storage.getCode("missing"), undefined);
+    const missingKey = randomUUID();
+    t.is(await storage.getCode(missingKey), undefined);
   });
 
   test("get-and-set-code", async (t) => {
-    await storage.set("test-state", testSession);
-    await storage.setCode("test-code", testSession);
-    t.is(await storage.getCode("test-code"), "test-state");
-    t.is((await storage.get("test-state"))?.code, "test-code");
+    const testStateKey = randomUUID();
+    const testCodeKey = randomUUID();
+    const session = testSession(testStateKey);
+    await storage.set(testStateKey, session);
+    await storage.setCode(testCodeKey, session);
+    t.is(await storage.getCode(testCodeKey), testStateKey);
+    t.is((await storage.get(testStateKey))?.code, testCodeKey);
   });
 
   test("delete-code", async (t) => {
-    await storage.set("test-state", testSession);
-    await storage.setCode("test-code", testSession);
-    t.not(await storage.getCode("test-code"), undefined);
-    await storage.delete("test-state");
-    t.is(await storage.get("test-state"), undefined);
-    t.is(await storage.getCode("test-state"), undefined);
+    const testStateKey = randomUUID();
+    const testCodeKey = randomUUID();
+    const session = testSession(testStateKey);
+    await storage.set(testStateKey, session);
+    await storage.setCode(testCodeKey, session);
+    t.not(await storage.getCode(testCodeKey), undefined);
+    await storage.delete(testStateKey);
+    t.is(await storage.get(testStateKey), undefined);
+    t.is(await storage.getCode(testStateKey), undefined);
   });
 }
+
+const testSession = (state: string) => ({
+  state,
+  client_id: "test-client-id",
+  redirect_uri: "test-redirect-uri",
+  pkce: {
+    code_challenge: "test-code-challenge",
+    code_challenge_method: "test-code-challenge-method",
+  },
+  expiration: 0,
+});

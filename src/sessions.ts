@@ -1,9 +1,9 @@
 import crypto from "crypto";
 
-import MemoryStorage from "./storage/memory";
-import RedisStorage from "./storage/redis";
-import { Session } from "./storage/types";
-import { REDIS_URL } from "./env";
+import MemoryStorage from "./storage/memory.ts";
+import RedisStorage from "./storage/redis.ts";
+import { Session } from "./storage/types.ts";
+import { REDIS_URL } from "./env.ts";
 
 const storage = REDIS_URL ? new RedisStorage(REDIS_URL) : new MemoryStorage();
 
