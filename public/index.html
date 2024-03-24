@@ -1,13 +1,49 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <title>PKCE Proxy</title>
-    <link rel="stylesheet" href="/public/mvp.css" />
+    <link rel="stylesheet" href="/public/bootstrap.min.css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Dan Palmer" />
+    <style type="text/css">
+      .required {
+        color: red;
+      }
+    </style>
   </head>
   <body>
-    <main>
-      <h1>PKCE Proxy</h1>
-      <section>
+    <div class="col-lg-8 mx-auto p-4 py-md-5 mt-5">
+      <header>
+        <h1>PKCE Proxy</h1>
+        <p class="lead">
+          A secure OAuth proxy that provides the PKCE flow for OAuth servers
+          that don't support it.
+        </p>
+      </header>
+      <hr class="my-5 border-secondary" />
+      <main>
+        <h5>What is OAuth?</h5>
+        <p>
+          OAuth is a mechanism for users to sign in to client applications, so
+          that those applications may act on their behalf. It traditionally
+          requires an ID and secret key bound to the client application.
+        </p>
+        <h5>What is PKCE?</h5>
+        <p>
+          PKCE, or TODO, is newer, alternative OAuth flow that does not require
+          a client secret key to function, instead negotiating a key per
+          session. The key benefit is that no secret information needs to be
+          distributed with a client application. This makes it easier to create
+          open-source client applications, and means there's nothing secret that
+          can be reverse engineered out of client applications.
+        </p>
+        <h5>What is a PKCE proxy?</h5>
+        <p>
+          A PKCE proxy is a server that is csonfigured with an OAuth client
+          secret, that can convert a PKCE flow used by a client application, to
+          a non-PKCE flow implemented by a server.
+        </p>
         <p>
           This server allows client software to connect to services that do not
           support the PKCE OAuth flow (which is the most secure one for
@@ -15,61 +51,95 @@
           configuration for your OAuth client, and you'll receive a new set of
           OAuth credentials to use.
         </p>
+        <h5>Why use <em>this</em> PKCE proxy?</h5>
         <p>
-          <b>Secure by default</b>
+          This proxy is designed to work for any PKCE client, and does not
+          required server-side configuration. All configuration is stored
+          encrypted in the token URLs.
         </p>
-        <ul>
-          <li>
-            <em>No user data persisted on the server</em> &mdash; time-limited
-            in-memory session data held until used or expired after a few
-            minutes.
-          </li>
-          <li>
-            <em>No OAuth client data stored on the server</em> &mdash; all
-            configuration is encrypted into a token in your OAuth URLs, not
-            stored or logged, and decrypted as needed on request.
-          </li>
-          <li>
-            <em>No secrets stored in your client-side application</em> &mdash;
-            secret data is AES encrypted with a server-side key and salt, so you
-            can safely distribute your code.
-          </li>
-        </ul>
-      </section>
-      <hr />
-      <form action="/create-config" method="POST">
-        <label for="clientSecret">Client Secret:</label>
-        <input
-          type="text"
-          id="clientSecret"
-          name="clientSecret"
-          required="required"
-        />
+        <p>
+          User data is only stored transiently, in memory, to serve the
+          authentication flow, and never persisted. Configuration such as OAuth
+          client secrets are never stored, only decrypted out of URLs at
+          request-time when needed.
+        </p>
+        <hr class="my-5 border-secondary" />
+        <form action="/create-config" method="POST" class="mt-5">
+          <div class="mb-3">
+            <label for="clientSecret">
+              Client Secret<span class="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="clientSecret"
+              name="clientSecret"
+              required="required"
+              class="form-control"
+            />
+          </div>
 
-        <label for="authorizeUrl">Authorize URL:</label>
-        <input
-          type="text"
-          id="authorizeUrl"
-          name="authorizeUrl"
-          required="required"
-        />
+          <div class="mb-3">
+            <label for="authorizeUrl">
+              Authorize URL<span class="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="authorizeUrl"
+              name="authorizeUrl"
+              required="required"
+              class="form-control"
+            />
+          </div>
 
-        <label for="tokenUrl">Token URL:</label>
-        <input type="text" id="tokenUrl" name="tokenUrl" required="required" />
+          <div class="mb-3">
+            <label for="tokenUrl">
+              Token URL<span class="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="tokenUrl"
+              name="tokenUrl"
+              required="required"
+              class="form-control"
+            />
+          </div>
 
-        <label for="refreshTokenUrl">Refresh Token URL:</label>
-        <input type="text" id="refreshTokenUrl" name="refreshTokenUrl" />
-        <small>Optional, defaults to token URL</small>
+          <div class="mb-3">
+            <label for="refreshTokenUrl">Refresh Token URL</label>
+            <input
+              type="text"
+              id="refreshTokenUrl"
+              name="refreshTokenUrl"
+              class="form-control"
+            />
+            <small class="form-text text-muted">
+              Optional, defaults to token URL
+            </small>
+          </div>
 
-        <label for="dataType">Request Encoding:</label>
-        <select id="dataType" name="dataType">
-          <option value="form">Form (application/x-www-form-urlencoded)</option>
-          <option value="json">JSON (application/json)</option>
-        </select>
+          <div class="mb-3">
+            <label for="dataType">Request Encoding</label>
+            <select id="dataType" name="dataType" class="form-control">
+              <option value="form">
+                Form (application/x-www-form-urlencoded)
+              </option>
+              <option value="json">JSON (application/json)</option>
+            </select>
+          </div>
 
-        <br />
-        <button type="submit" id="show">Submit</button>
-      </form>
-    </main>
+          <button type="submit" id="show" class="btn btn-primary">
+            Get PKCE tokens
+          </button>
+          <p class="mt-1">
+            <small class="form-text text-muted">
+              This data is not stored.
+            </small>
+          </p>
+        </form>
+      </main>
+      <footer class="pt-5 my-5 text-body-secondary border-top">
+        Created by Dan Palmer and contributors © 2024
+      </footer>
+    </div>
   </body>
 </html>
