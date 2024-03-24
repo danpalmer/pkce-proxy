@@ -1,5 +1,5 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
-import { add } from "../sessions.ts";
+import { add } from "../sessions";
 import { PROXY_REDIRECT_URL } from "../env";
 import { getConfig } from "../client-config";
 

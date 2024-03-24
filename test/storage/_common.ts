@@ -1,7 +1,7 @@
 import test from "ava";
 import { randomUUID } from "crypto";
 
-import { SessionStorage } from "../../src/storage/types.ts";
+import { SessionStorage } from "../../src/storage/types";
 
 export default function testStorage(storage: SessionStorage) {
   test("get-empty", async (t) => {
