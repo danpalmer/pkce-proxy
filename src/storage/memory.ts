@@ -1,4 +1,5 @@
 import { Session, SessionStorage } from "./types";
+import { SESSION_MAX_SECONDS } from "../env";
 
 export default class MemoryStorage implements SessionStorage {
   sessions: Partial<Record<string, Session>> = {};
@@ -14,11 +15,20 @@ export default class MemoryStorage implements SessionStorage {
 
   async set(state: string, session: Session) {
     this.sessions[state] = session;
+
+    setTimeout(async () => {
+      delete this.sessions[state];
+    }, SESSION_MAX_SECONDS * 1000);
   }
 
   async setCode(code: string, session: Session) {
     this.codes[code] = session.state;
     this.sessions[session.state] = { ...session, code: code };
+
+    setTimeout(async () => {
+      delete this.sessions[session.state];
+      delete this.codes[code];
+    }, SESSION_MAX_SECONDS * 1000);
   }
 
   async delete(state: string) {
