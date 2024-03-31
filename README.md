@@ -46,3 +46,13 @@ npm test && npm start
 ```
 
 The proxy should now be running on [localhost:5000](http://localhost:5000/).
+
+## Contributions
+
+Thanks to @mathieudutour for creating
+https://github.com/mathieudutour/pkce-proxy. This project builds on its
+foundations to add multi-tenancy, self-service setup, Redis persistence, and
+more.
+
+Contributions are welcome, particularly those around OAuth compatibility, error
+messages and user (developer) experience, and metrics.
