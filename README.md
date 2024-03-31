@@ -17,6 +17,10 @@ PROXY_HOSTNAME=https://your-proxy-domain
 SECRET_KEY=<a long random value>
 ```
 
+The `SECRET_KEY` is used to encrypt configuration values. It's important that it
+is long an unpredictable. A good key can be generated with
+`pwgen --secure 100 1`.
+
 **Optional (defaults shown)**
 
 ```
