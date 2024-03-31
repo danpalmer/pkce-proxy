@@ -1,53 +1,48 @@
 # PKCE Proxy for Raycast
 
-A barebones proxy to enable the PKCE flow for OAuth providers that do not support PKCE.
-
-The proxy server has been tested with Notion but it may need some tweaks to adapt it to another provider.
+A multi-tenant proxy to enable the OAuth PKCE flow for providers that do not
+support PKCE.
 
 ## Configuration
 
-The proxy uses environment variables to be as versatile as possible. You will need to provide a few for it to work.
+Configuration for specific providers is provided to the web application and a new
+set of proxy URLs to use is returned. These contain the necessary configuration.
 
-Here is an example using [Notion](https://notion.so) as the provider:
+The server-side configuration is provided in environment variables:
+
+**Required**
 
 ```
 PROXY_HOSTNAME=https://your-proxy-domain
-CLIENT_SECRET=client-secret-provided-by-notion
-AUTHORIZE_URL=https://api.notion.com/v1/oauth/authorize
-TOKEN_URL=https://api.notion.com/v1/oauth/token
+SECRET_KEY=<a long random value>
 ```
 
-If the provider supports refreshing tokens and the endpoint to refresh tokens is different from `TOKEN_URL`, you can specify `REFRESH_TOKEN_URL`.
+**Optional (defaults shown)**
 
-If the provider expects the body of requests to be form encoded instead of JSON, you can set the `JSON_OR_FORM` to `"form"`.
+```
+PORT=5000
+HOST=0.0.0.0
+NODE_ENV=development # production, test
+PROXY_REDIRECT_URL=https://your-proxy-domain/redirect
+REDIS_URL= # redis:// URL to use Redis for storage
+```
+
+pkce-proxy requires short-term storage to serve correct flows. Currently sessions
+are configured with a 5 minute expiry, meaning that a login flow initiated by a
+user must complete within 5 minutes or the data for it will be purged.
+
+This temporary storage can complicate deployment as by default session data is
+only stored in memory in the running Node process. Multi-process/multi-server
+deployments, or server restarts will therefore create sessions that won't always
+work. If a `REDIS_URL` is provided, pkce-proxy will use that Redis instance to
+store this temporary data instead, making scale-out and re-deployment easier.
 
 ## Running Locally
 
 ```sh
 npm install
 npm run build
-npm start
+npm test && npm start
 ```
 
 The proxy should now be running on [localhost:5000](http://localhost:5000/).
-
-## Deploying to Heroku
-
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
-
-or
-
-Make sure you have the [Heroku CLI](https://cli.heroku.com/) installed.
-
-```
-heroku create
-git push heroku main
-heroku open
-```
-
-## Documentation
-
-For more information about OAuth with Raycast, see:
-
-- [Raycast developer documentation](https://developers.raycast.com/api-reference/oauth)
-- [Raycast extension using this proxy](https://github.com/raycast/extensions/tree/main/extensions/notion)
