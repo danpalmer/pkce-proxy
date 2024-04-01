@@ -7,7 +7,7 @@ export default class RedisStorage implements SessionStorage {
   client: Redis;
 
   constructor(redisUrl: string) {
-    this.client = new Redis(redisUrl);
+    this.client = new Redis(redisUrl, { family: 6 });
   }
 
   async get(state: string): Promise<Session | undefined> {
