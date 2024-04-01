@@ -61,6 +61,13 @@ export default async function token(req: FastifyRequest, res: FastifyReply) {
     };
   }
 
+  if (clientConfig.basicAuthHeader) {
+    options.headers = {
+      ...options.headers,
+      Authorization: clientConfig.basicAuthHeader,
+    };
+  }
+
   const response = await fetch(clientConfig.tokenUrl, {
     method: "POST",
     ...options,

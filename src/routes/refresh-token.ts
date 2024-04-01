@@ -12,7 +12,6 @@ export default async function refresh_token(
   const { client_id, refresh_token, ...extra } = req.body as any;
 
   let options: RequestInit = {};
-
   if (clientConfig.dataType === "json") {
     options = {
       headers: {
@@ -43,6 +42,13 @@ export default async function refresh_token(
         Accept: "application/json",
       },
       body,
+    };
+  }
+
+  if (clientConfig.basicAuthHeader) {
+    options.headers = {
+      ...options.headers,
+      Authorization: clientConfig.basicAuthHeader,
     };
   }
 

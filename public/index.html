@@ -128,6 +128,19 @@
             </select>
           </div>
 
+          <div class="mb-3">
+            <label for="refreshTokenUrl">Basic Auth header</label>
+            <input
+              type="text"
+              id="basicAuthHeader"
+              name="basicAuthHeader"
+              class="form-control"
+            />
+            <small class="form-text text-muted">
+              Optional, defaults to no header
+            </small>
+          </div>
+
           <button type="submit" id="show" class="btn btn-primary">
             Get PKCE tokens
           </button>

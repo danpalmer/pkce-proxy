@@ -15,7 +15,8 @@ export default function createConfig(req: FastifyRequest, res: FastifyReply) {
     !form.clientSecret ||
     !form.authorizeUrl ||
     !form.tokenUrl ||
-    (form.dataType != "json" && form.dataType != "form" && form.dataType)
+    (form.dataType != "json" && form.dataType != "form" && form.dataType) ||
+    (form.basicAuthHeader && typeof form.basicAuthHeader !== "string")
   ) {
     res.status(400);
     return { error: "missing_required_params" };
@@ -27,6 +28,7 @@ export default function createConfig(req: FastifyRequest, res: FastifyReply) {
     tokenUrl: form.tokenUrl,
     refreshTokenUrl: form.refreshTokenUrl,
     dataType: form.dataType as "form" | "json" | undefined,
+    basicAuthHeader: form.basicAuthHeader,
   };
 
   const token = encode(config);

@@ -10,6 +10,7 @@ export interface ClientConfig {
   tokenUrl: string;
   refreshTokenUrl?: string;
   dataType?: "json" | "form";
+  basicAuthHeader?: string;
 }
 
 const encoder = new TextEncoder();
@@ -17,7 +18,7 @@ const decoder = new TextDecoder();
 
 // Important: dictionary changes will invalidate previously encoded tokens
 const compressionDictionary = Buffer.from(
-  "https,clientSecret,authorizeUrl,tokenUrl,refreshTokenUrl,dataType,json,form,authorize,refresh,token,com,www"
+  "https,clientSecret,authorizeUrl,tokenUrl,refreshTokenUrl,dataType,basicAuthHeader,json,form,authorize,refresh,token,com,www"
 );
 
 export function getConfig(req: FastifyRequest): ClientConfig {

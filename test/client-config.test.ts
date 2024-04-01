@@ -10,6 +10,7 @@ test("round-trip", (t) => {
     tokenUrl: "https://example.com/token",
     refreshTokenUrl: "https://example.com/refresh",
     dataType: "json",
+    basicAuthHeader: "Basic YmVlcw==",
   };
 
   const encoded = config.encode(value);
@@ -21,7 +22,7 @@ test("request-config", (t) => {
   const req = {
     params: {
       clientToken:
-        "uJa2LwQrRYYvC9%2BbYW3I8MNSLsxXDauV273Ybl0hzdKogJ8PVFOANPX5Iwz3gzsdvQyXQ0VWhWnzZnhkRqXFyITHUjk8aP%2B9aEpnJTHg1UEgN5IoDI9CZmnhk4RztplMXR2SjW2OMYXPc0xXXC0%3D",
+        "ktSUMEi92bjxr%2FfuaLMZ36PYMUmly9ri8Ea6%2FHeXNGcFCAuyDo%2FNq1g1M5%2BcaZpCLYX8y8saRQi2UQ7BO5wAdO8EXsWURXWFNVyP9g%2Bi%2Bxs4Ohjx7ZwlS9jH0fVUE3Ou%2FMwx4Hrp88NvQOH%2FRq1wcLrAu5FcTNLJHSLrPYF0xjIQ",
     },
   };
 
@@ -33,6 +34,7 @@ test("request-config", (t) => {
       tokenUrl: "https://example.com/token",
       refreshTokenUrl: "https://example.com/refresh",
       dataType: "json",
+      basicAuthHeader: "Basic YmVlcw==",
     },
     value
   );
