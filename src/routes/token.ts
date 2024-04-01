@@ -34,9 +34,6 @@ export default async function token(req: FastifyRequest, res: FastifyReply) {
 
     options = {
       headers: {
-        Authorization: `Basic ${Buffer.from(
-          `${client_id}:${clientConfig.clientSecret}`
-        ).toString("base64")}`,
         "Content-Type": "application/json",
         Accept: "application/json",
       },
