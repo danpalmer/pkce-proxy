@@ -44,8 +44,8 @@ server.addHook("onRequest", addSecurityHeaders);
 server
   .get("/", index)
   .post("/create-config", createConfig)
+  .get("/redirect", redirect)
   .get("/:clientToken/authorize", authorize)
-  .get("/:clientToken/redirect", redirect)
   .post("/:clientToken/token", token)
   .post("/:clientToken/refresh-token", refreshToken);
 
