@@ -13,3 +13,7 @@ processes = ['app']
 
 [[vm]]
 size = 'shared-cpu-1x'
+
+[metrics]
+port = 5000
+path = "/metrics"
