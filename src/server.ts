@@ -27,7 +27,10 @@ const loggers = {
   test: false,
 };
 
-const server = fastify({ logger: loggers[ENVIRONMENT] || true });
+const server = fastify({
+  logger: loggers[ENVIRONMENT] || true,
+  maxParamLength: 1000,
+});
 
 server.register(fastifyStatic, {
   root: path.join(__dirname, "..", "public"),
