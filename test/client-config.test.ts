@@ -18,7 +18,7 @@ test("round-trip-full", (t) => {
   t.deepEqual(value, decoded);
 });
 
-test("round-trip-small", (t) => {
+test("round-trip-minimal", (t) => {
   const value: config.ClientConfig = {
     clientSecret: "foo",
     authorizeUrl: "https://example.com/authorize",
@@ -31,7 +31,7 @@ test("round-trip-small", (t) => {
   t.deepEqual(value, decoded);
 });
 
-test("request-config", (t) => {
+test("request-config-full", (t) => {
   const req = {
     params: {
       clientToken:
@@ -48,6 +48,26 @@ test("request-config", (t) => {
       refreshTokenUrl: "https://example.com/refresh",
       dataType: "json",
       basicAuthHeader: "Basic YmVlcw==",
+    },
+    value
+  );
+});
+
+test("request-config-minimal", (t) => {
+  const req = {
+    params: {
+      clientToken:
+        "mz2AJ1SjZJErXR3Cc6Zhm94os8sE1ALfyQlJAyjEIFNL3C%2BjcUnZABxBjLMXTiEB%2BeNf1Zi%2FqVnxzhTff7bcZhZqlffYiNr84NLHz%2F5aFvK1Xvf2NOfGNlJsKdsmw%2FioGN5EQw%3D%3D",
+    },
+  };
+
+  const value = config.getConfig(req as FastifyRequest);
+  t.deepEqual(
+    {
+      clientSecret: "foo",
+      authorizeUrl: "https://example.com/authorize",
+      tokenUrl: "https://example.com/token",
+      dataType: "json",
     },
     value
   );
