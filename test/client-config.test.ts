@@ -3,7 +3,7 @@ import test from "ava";
 import * as config from "../src/client-config";
 import { FastifyRequest } from "fastify";
 
-test("round-trip", (t) => {
+test("round-trip-full", (t) => {
   const value: config.ClientConfig = {
     clientSecret: "foo",
     authorizeUrl: "https://example.com/authorize",
@@ -11,6 +11,19 @@ test("round-trip", (t) => {
     refreshTokenUrl: "https://example.com/refresh",
     dataType: "json",
     basicAuthHeader: "Basic YmVlcw==",
+  };
+
+  const encoded = config.encode(value);
+  const decoded = config.decode(encoded);
+  t.deepEqual(value, decoded);
+});
+
+test("round-trip-small", (t) => {
+  const value: config.ClientConfig = {
+    clientSecret: "foo",
+    authorizeUrl: "https://example.com/authorize",
+    tokenUrl: "https://example.com/token",
+    dataType: "json",
   };
 
   const encoded = config.encode(value);
