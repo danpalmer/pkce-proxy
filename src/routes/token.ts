@@ -2,6 +2,7 @@ import type { FastifyRequest, FastifyReply } from "fastify";
 import { find, consume } from "../sessions";
 import { PROXY_REDIRECT_URL } from "../env";
 import { getConfig } from "../client-config";
+import { descriptiveClientError, descriptiveError } from "../errors";
 
 export default async function token(req: FastifyRequest, res: FastifyReply) {
   const clientConfig = getConfig(req);
@@ -9,8 +10,13 @@ export default async function token(req: FastifyRequest, res: FastifyReply) {
 
   const session = await find(code, code_verifier);
   if (!session) {
-    res.status(400);
-    return { error: "invalid_grant" };
+    return descriptiveClientError(
+      req,
+      res,
+      "invalid_grant",
+      /* proxy= */ true,
+      { parsed_request: { code_verifier, client_id, code, ...extra } }
+    );
   }
 
   await consume(session);
@@ -27,9 +33,13 @@ export default async function token(req: FastifyRequest, res: FastifyReply) {
         redirect_uri: PROXY_REDIRECT_URL,
       });
     } catch (e) {
-      console.error(e);
-      res.status(400);
-      return { error: "invalid_body" };
+      return descriptiveClientError(
+        req,
+        res,
+        "invalid_body",
+        /* proxy= */ true,
+        { parsed_request: { code_verifier, client_id, code, ...extra } }
+      );
     }
 
     options = {
@@ -69,6 +79,23 @@ export default async function token(req: FastifyRequest, res: FastifyReply) {
     method: "POST",
     ...options,
   });
+
+  if (!response.ok) {
+    return descriptiveError(
+      req,
+      res,
+      response.status,
+      await response.json(),
+      false,
+      {
+        parsed_request: { code_verifier, client_id, code, ...extra },
+        upstream_response: {
+          headers: response.headers.entries(),
+          body: await response.text(),
+        },
+      }
+    );
+  }
 
   res.status(response.status);
   return response.json();

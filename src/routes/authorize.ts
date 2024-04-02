@@ -2,6 +2,7 @@ import type { FastifyRequest, FastifyReply } from "fastify";
 import { add } from "../sessions";
 import { PROXY_REDIRECT_URL } from "../env";
 import { getConfig } from "../client-config";
+import { descriptiveClientError, descriptiveError } from "../errors";
 
 export default async function authorize(
   req: FastifyRequest,
@@ -25,14 +26,34 @@ export default async function authorize(
     !code_challenge ||
     !code_challenge_method
   ) {
-    res.status(400);
-    return { error: "missing_required_params" };
+    return descriptiveClientError(
+      req,
+      res,
+      "invalid_parameters",
+      /* proxy= */ true,
+      {
+        parsed_request: {
+          client_id,
+          redirect_uri,
+          code_challenge,
+          code_challenge_method,
+          state,
+          ...extra,
+        },
+      }
+    );
   }
 
-  await add(client_id, redirect_uri, state, {
-    code_challenge,
-    code_challenge_method,
-  });
+  try {
+    await add(client_id, redirect_uri, state, {
+      code_challenge,
+      code_challenge_method,
+    });
+  } catch (e) {
+    return descriptiveError(req, res, 503, "storage_error", /* proxy= */ true, {
+      message: "Proxy Redis is down",
+    });
+  }
 
   const params = new URLSearchParams();
   params.append("client_id", client_id);

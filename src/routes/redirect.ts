@@ -1,20 +1,31 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
 
 import { findByState, addCode } from "../sessions";
+import { descriptiveClientError } from "../errors";
 
 export default async function redirect(req: FastifyRequest, res: FastifyReply) {
   const { code, state, ...extra } = req.query as Record<string, string>;
 
   if (!code || !state) {
-    res.status(400);
-    return { error: "missing_required_params" };
+    return descriptiveClientError(
+      req,
+      res,
+      "invalid_parameters",
+      /* proxy= */ true,
+      { parsed_request: { code, state, ...extra } }
+    );
   }
 
   const session = await findByState(state);
 
   if (!session) {
-    res.status(400);
-    return { error: "invalid_grant" };
+    return descriptiveClientError(
+      req,
+      res,
+      "invalid_grant",
+      /* proxy= */ true,
+      { parsed_request: { code, state, ...extra } }
+    );
   }
 
   await addCode(code, session);
