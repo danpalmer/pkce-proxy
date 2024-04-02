@@ -28,8 +28,8 @@ const loggers = {
   test: false,
 };
 
-const server = fastify({
-  logger: loggers[ENVIRONMENT] || true,
+export const server = fastify({
+  logger: loggers[ENVIRONMENT],
   maxParamLength: 1000,
 });
 
