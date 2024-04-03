@@ -35,6 +35,28 @@ test("redirects", async (t) => {
   t.falsy(response.text);
 });
 
+test("redirects-with-extra-parameters", async (t) => {
+  await server.ready();
+  const token = createToken();
+  const response = await supertest(server.server)
+    .get(`/${token}/authorize`)
+    .query({
+      client_id: CLIENT_ID,
+      redirect_uri: CLIENT_REDIRECT_URL,
+      state: TEST_STATE,
+      code_challenge: CODE_CHALLENGE,
+      code_challenge_method: CODE_CHALLENGE_METHOD,
+      foo: "bar",
+      baz: "quux",
+    })
+    .expect(307)
+    .expect(
+      "Location",
+      `https://api.example.com/oauth/authorize?client_id=${CLIENT_ID}&state=${TEST_STATE}&foo=bar&baz=quux&redirect_uri=https%3A%2F%2F${PROXY_HOSTNAME}%2Fredirect`
+    );
+  t.falsy(response.text);
+});
+
 test("returns-invalid-parameters", async (t) => {
   await server.ready();
   const token = createToken();

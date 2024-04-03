@@ -18,6 +18,7 @@ export const REFRESH_TOKEN_URL = "https://api.example.com/oauth/refresh";
 export const DATA_TYPE = "json";
 export const CLIENT_REDIRECT_URL = "https://client.example.com/redirect";
 export const TEST_STATE = "ED29ED15-6367-4389-9E08-A87800DA33B3";
+export const CODE = "todo";
 export const CODE_CHALLENGE = "todo";
 export const CODE_CHALLENGE_METHOD = "todo";
 
