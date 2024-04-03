@@ -9,7 +9,7 @@
   "scripts": {
     "start": "node .",
     "build": "tsc && cp -R public dist/",
-    "test": "ava",
+    "test": "ava --serial",
     "benchmark-url-size": "PROXY_HOSTNAME=1 SECRET_KEY=1 node dist/scripts/benchmark-url-size.js"
   },
   "keywords": [],
