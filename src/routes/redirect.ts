@@ -37,5 +37,6 @@ export default async function redirect(req: FastifyRequest, res: FastifyReply) {
     params.append(k, extra[k] as string);
   });
 
-  return res.redirect(307, `${session.redirect_uri}&${params.toString()}`);
+  // TODO: handle redirect URIs that already have query parameters.
+  return res.redirect(307, `${session.redirect_uri}?${params.toString()}`);
 }
