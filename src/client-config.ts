@@ -13,6 +13,10 @@ export interface ClientConfig {
   basicAuthHeader?: string;
 }
 
+// Transforming to these parameters in the serialised form doesn't contribute
+// much of a saving above including the keys in the compression dictionary, but
+// it does separate the serialised form from the internal representation making
+// it easier to extend with more optional parameters in the future.
 const parameterMap = {
   clientSecret: "a",
   authorizeUrl: "b",
