@@ -9,7 +9,7 @@ const benchmarkValue: ClientConfig = {
   dataType: "json",
 };
 
-let count = 1000;
+let count = 10_000;
 let total = 0;
 for (let i = 0; i < count; i++) {
   total += encode(benchmarkValue).length;
