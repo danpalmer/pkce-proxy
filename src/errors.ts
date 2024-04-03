@@ -29,7 +29,6 @@ export function descriptiveError(
   context: Record<string, any>
 ): FastifyReply {
   return response.status(statusCode).send({
-    message: "Something went wrong",
     generated_by: fromProxy ? "oauth_pkce_proxy" : "upstream_oauth_provider",
     error: errorCode,
     config: redactConfig(getConfig(request)),
