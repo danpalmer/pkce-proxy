@@ -31,11 +31,15 @@ test("round-trip-minimal", (t) => {
   t.deepEqual(value, decoded);
 });
 
-test("request-config-full", (t) => {
+test("request-config-full-v1", (t) => {
+  // Warning: This test ensures backwards compatibility. If you need to change
+  // this test you have most likely broken backwards compatibility. When adding
+  // a new optional field, new tests should be added instead, with the v1 suffix
+  // and existing tests should be kept as-is.
   const req = {
     params: {
       clientToken:
-        "ktSUMEi92bjxr%2FfuaLMZ36PYMUmly9ri8Ea6%2FHeXNGcFCAuyDo%2FNq1g1M5%2BcaZpCLYX8y8saRQi2UQ7BO5wAdO8EXsWURXWFNVyP9g%2Bi%2Bxs4Ohjx7ZwlS9jH0fVUE3Ou%2FMwx4Hrp88NvQOH%2FRq1wcLrAu5FcTNLJHSLrPYF0xjIQ",
+        "ZE7ps9vn1HOC3k1voue4kUygDCOBVckKRVkjHM4iDmQuAlUP1eY3RL050rV%2BN9tP9yEeskpGhFANzmc7SlKIH7HViYjF7l78thvS3VmA90h2bIJd8%2BnCQmcts9W2RR7L5UPYTkAWTGhrs2FnmRaOYxplU3Fr",
     },
   };
 
@@ -53,11 +57,15 @@ test("request-config-full", (t) => {
   );
 });
 
-test("request-config-minimal", (t) => {
+test("request-config-minimal-v1", (t) => {
+  // Warning: This test ensures backwards compatibility. If you need to change
+  // this test you have most likely broken backwards compatibility. When adding
+  // a new optional field, new tests should be added instead, with the v1 suffix
+  // and existing tests should be kept as-is.
   const req = {
     params: {
       clientToken:
-        "mz2AJ1SjZJErXR3Cc6Zhm94os8sE1ALfyQlJAyjEIFNL3C%2BjcUnZABxBjLMXTiEB%2BeNf1Zi%2FqVnxzhTff7bcZhZqlffYiNr84NLHz%2F5aFvK1Xvf2NOfGNlJsKdsmw%2FioGN5EQw%3D%3D",
+        "AeBfphzM2LnQ%2FTK5c%2BoW8TtnenZaAR8n6EliLNiBiIMNeOkc%2F%2BWJvizsdw%2FM1qQINdRenbVqcRFGkChzO45wjeGan6ie2PiZh6SbIc1Rz%2FRP2DFH%2F15TnoszzLLd",
     },
   };
 
