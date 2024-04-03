@@ -28,12 +28,19 @@ export function descriptiveError(
   fromProxy: boolean,
   context: Record<string, any>
 ): FastifyReply {
-  return response.status(statusCode).send({
+  const error = {
     generated_by: fromProxy ? "oauth_pkce_proxy" : "upstream_oauth_provider",
     error: errorCode,
-    config: redactConfig(getConfig(request)),
     context: context,
-  });
+  } as any;
+
+  try {
+    error.config = redactConfig(getConfig(request));
+  } catch (e) {
+    // Not all requests have a config
+  }
+
+  return response.status(statusCode).send(error);
 }
 
 function redactConfig(config: ClientConfig): ClientConfig {
