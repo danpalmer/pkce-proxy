@@ -37,6 +37,17 @@ export default async function redirect(req: FastifyRequest, res: FastifyReply) {
     params.append(k, extra[k] as string);
   });
 
-  // TODO: handle redirect URIs that already have query parameters.
-  return res.redirect(307, `${session.redirect_uri}?${params.toString()}`);
+  // We don't fully parse the URI here because this may be an app-specific URI
+  // like `myapp://auth-callback` and we don't want to round-trip through a
+  // parser that might try to normalise things. Instead we rely on `?` not being
+  // a URL safe character, and look for its presence to see if there are already
+  // query parameters.
+  let redirectUri = session.redirect_uri;
+  if (redirectUri.indexOf("?") === -1) {
+    redirectUri += "?" + params.toString();
+  } else {
+    redirectUri += "&" + params.toString();
+  }
+
+  return res.redirect(307, redirectUri);
 }

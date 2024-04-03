@@ -66,6 +66,35 @@ test("redirects-with-extra-parameters", async (t) => {
   }
 });
 
+test("redirects-with-redirect-uri-with-query", async (t) => {
+  await server.ready();
+  const redirectUri = "https://example.com/redirect?app=123";
+  await add(CLIENT_ID, redirectUri, TEST_STATE, {
+    code_challenge: CODE_CHALLENGE,
+    code_challenge_method: CODE_CHALLENGE_METHOD,
+  });
+
+  const response = await supertest(server.server)
+    .get(`/redirect`)
+    .query({
+      code: CODE,
+      state: TEST_STATE,
+      foo: "bar",
+      baz: "quux",
+    })
+    .expect(307)
+    .expect(
+      "Location",
+      `${redirectUri}&code=${CODE}&state=${TEST_STATE}&foo=bar&baz=quux`
+    );
+  t.falsy(response.text);
+
+  const session = await findByState(TEST_STATE);
+  if (session) {
+    await consume(session);
+  }
+});
+
 test("returns-invalid-grant-without-state", async (t) => {
   await server.ready();
   const response = await supertest(server.server)
