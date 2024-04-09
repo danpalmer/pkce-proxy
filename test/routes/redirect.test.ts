@@ -25,6 +25,7 @@ test("redirects", async () => {
       code: CODE,
       state: TEST_STATE,
     })
+    .set("x-forwarded-proto", "https")
     .expect(307)
     .expect(
       "Location",
@@ -53,6 +54,7 @@ test("redirects-with-extra-parameters", async () => {
       foo: "bar",
       baz: "quux",
     })
+    .set("x-forwarded-proto", "https")
     .expect(307)
     .expect(
       "Location",
@@ -82,6 +84,7 @@ test("redirects-with-redirect-uri-with-query", async () => {
       foo: "bar",
       baz: "quux",
     })
+    .set("x-forwarded-proto", "https")
     .expect(307)
     .expect(
       "Location",
@@ -103,6 +106,7 @@ test("returns-invalid-grant-without-state", async () => {
       code: CODE,
       state: TEST_STATE,
     })
+    .set("x-forwarded-proto", "https")
     .expect(400);
   expect(JSON.parse(response.text)).toEqual({
     error: "invalid_grant",
@@ -124,6 +128,7 @@ test("returns-invalid-parameters", async () => {
       code: CODE,
       // No state.
     })
+    .set("x-forwarded-proto", "https")
     .expect(400);
   expect(JSON.parse(response.text)).toEqual({
     error: "invalid_parameters",

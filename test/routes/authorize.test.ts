@@ -27,6 +27,7 @@ test("redirects", async () => {
       code_challenge: CODE_CHALLENGE,
       code_challenge_method: CODE_CHALLENGE_METHOD,
     })
+    .set("x-forwarded-proto", "https")
     .expect(307)
     .expect(
       "Location",
@@ -49,6 +50,7 @@ test("redirects-with-extra-parameters", async () => {
       foo: "bar",
       baz: "quux",
     })
+    .set("x-forwarded-proto", "https")
     .expect(307)
     .expect(
       "Location",
@@ -69,6 +71,7 @@ test("returns-invalid-parameters", async () => {
       code_challenge: CODE_CHALLENGE,
       code_challenge_method: CODE_CHALLENGE_METHOD,
     })
+    .set("x-forwarded-proto", "https")
     .expect(400);
   expect(JSON.parse(response.text)).toEqual({
     error: "invalid_parameters",

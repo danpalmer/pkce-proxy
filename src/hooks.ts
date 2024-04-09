@@ -11,17 +11,16 @@ export default function addSecurityHeaders(
   res: FastifyReply,
   done: HookHandlerDoneFunction
 ) {
-  // If prod and not HTTPs, redirect and end.
-  if (
-    ENVIRONMENT === "production" &&
-    req.headers["x-forwarded-proto"] !== "https"
-  ) {
+  const isDevelopment = ENVIRONMENT === "development";
+
+  // If not dev and not HTTPs, redirect and end.
+  if (!isDevelopment && req.headers["x-forwarded-proto"] !== "https") {
     res.redirect(302, "https://" + req.hostname + req.originalUrl);
     return done();
   }
 
-  // If prod, enable HSTS so that this only ever works on HTTPS.
-  if (ENVIRONMENT === "production") {
+  // If not dev, enable HSTS so that this only ever works on HTTPS.
+  if (!!isDevelopment) {
     res.header(
       "Strict-Transport-Security",
       "max-age=31536000; includeSubDomains"

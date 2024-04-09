@@ -3,15 +3,15 @@
   "version": "0.1.0",
   "description": "A barebones PKCE proxy to enable OAuth for OAuth providers that do not support PKC",
   "scripts": {
-    "start": "bun run index.ts",
-    "build": "bun build ./index.ts --outfile=build/bundle.js",
-    "test": "PROXY_HOSTNAME=1 SECRET_KEY=abc123 bun test",
-    "benchmark-url-size": "PROXY_HOSTNAME=1 SECRET_KEY=abc123 bun scripts/benchmark-url-size.js"
+    "start": "bun run index.ts --env-file=.env.local",
+    "build": "bun build ./index.ts --target bun",
+    "test": "bun test --env-file=.env.local",
+    "benchmark-url-size": "bun scripts/benchmark-url-size.ts --env-file=.env.local"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
-  "type": "commonjs",
+  "type": "module",
   "devDependencies": {
     "@ava/typescript": "^4.1.0",
     "@types/bun": "^1.0.12",
@@ -31,20 +31,5 @@
     "fastify-metrics": "^11.0.0",
     "ioredis": "^5.3.2",
     "protobufjs": "~7.2.5"
-  },
-  "ava": {
-    "extensions": {
-      "ts": "module"
-    },
-    "nodeArguments": [
-      "--trace-deprecation",
-      "--import=tsimp"
-    ],
-    "verbose": true,
-    "environmentVariables": {
-      "PROXY_HOSTNAME": "test.com",
-      "SECRET_KEY": "abc123",
-      "SESSION_MAX_SECONDS": "1"
-    }
   }
 }

@@ -1,2 +1,11 @@
-/dist
-/node_modules
+.dockerignore
+.env
+.git
+.gitignore
+.idea
+.vscode
+coverage*
+Dockerfile*
+LICENSE
+node_modules
+README.md
