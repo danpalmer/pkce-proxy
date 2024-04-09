@@ -1,4 +1,4 @@
-import test from "ava";
+import { expect, test } from "bun:test";
 import supertest from "supertest";
 
 import { server } from "../../src/server";
@@ -12,7 +12,7 @@ import {
   CODE,
 } from "./_common";
 
-test("redirects", async (t) => {
+test("redirects", async () => {
   await server.ready();
   await add(CLIENT_ID, CLIENT_REDIRECT_URL, TEST_STATE, {
     code_challenge: CODE_CHALLENGE,
@@ -30,7 +30,7 @@ test("redirects", async (t) => {
       "Location",
       `${CLIENT_REDIRECT_URL}?code=${CODE}&state=${TEST_STATE}`
     );
-  t.falsy(response.text);
+  expect(response.text).toBeFalsy();
 
   const session = await findByState(TEST_STATE);
   if (session) {
@@ -38,7 +38,7 @@ test("redirects", async (t) => {
   }
 });
 
-test("redirects-with-extra-parameters", async (t) => {
+test("redirects-with-extra-parameters", async () => {
   await server.ready();
   await add(CLIENT_ID, CLIENT_REDIRECT_URL, TEST_STATE, {
     code_challenge: CODE_CHALLENGE,
@@ -58,7 +58,7 @@ test("redirects-with-extra-parameters", async (t) => {
       "Location",
       `${CLIENT_REDIRECT_URL}?code=${CODE}&state=${TEST_STATE}&foo=bar&baz=quux`
     );
-  t.falsy(response.text);
+  expect(response.text).toBeFalsy();
 
   const session = await findByState(TEST_STATE);
   if (session) {
@@ -66,7 +66,7 @@ test("redirects-with-extra-parameters", async (t) => {
   }
 });
 
-test("redirects-with-redirect-uri-with-query", async (t) => {
+test("redirects-with-redirect-uri-with-query", async () => {
   await server.ready();
   const redirectUri = "https://example.com/redirect?app=123";
   await add(CLIENT_ID, redirectUri, TEST_STATE, {
@@ -87,7 +87,7 @@ test("redirects-with-redirect-uri-with-query", async (t) => {
       "Location",
       `${redirectUri}&code=${CODE}&state=${TEST_STATE}&foo=bar&baz=quux`
     );
-  t.falsy(response.text);
+  expect(response.text).toBeFalsy();
 
   const session = await findByState(TEST_STATE);
   if (session) {
@@ -95,7 +95,7 @@ test("redirects-with-redirect-uri-with-query", async (t) => {
   }
 });
 
-test("returns-invalid-grant-without-state", async (t) => {
+test("returns-invalid-grant-without-state", async () => {
   await server.ready();
   const response = await supertest(server.server)
     .get(`/redirect`)
@@ -104,7 +104,7 @@ test("returns-invalid-grant-without-state", async (t) => {
       state: TEST_STATE,
     })
     .expect(400);
-  t.deepEqual(JSON.parse(response.text), {
+  expect(JSON.parse(response.text)).toEqual({
     error: "invalid_grant",
     generated_by: "oauth_pkce_proxy",
     context: {
@@ -116,7 +116,7 @@ test("returns-invalid-grant-without-state", async (t) => {
   });
 });
 
-test("returns-invalid-parameters", async (t) => {
+test("returns-invalid-parameters", async () => {
   await server.ready();
   const response = await supertest(server.server)
     .get(`/redirect`)
@@ -125,7 +125,7 @@ test("returns-invalid-parameters", async (t) => {
       // No state.
     })
     .expect(400);
-  t.deepEqual(JSON.parse(response.text), {
+  expect(JSON.parse(response.text)).toEqual({
     error: "invalid_parameters",
     generated_by: "oauth_pkce_proxy",
     context: {

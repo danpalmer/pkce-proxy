@@ -1,61 +1,61 @@
-import test from "ava";
+import { expect, test } from "bun:test";
 import { randomUUID } from "crypto";
 
 import { SessionStorage } from "../../src/storage/types";
 
 export default function testStorage(storage: SessionStorage) {
-  test("get-empty", async (t) => {
+  test("get-empty", async () => {
     const missingKey = randomUUID();
-    t.is(await storage.get(missingKey), undefined);
+    expect(await storage.get(missingKey)).toBeUndefined();
   });
 
-  test("get-and-set-state", async (t) => {
+  test("get-and-set-state", async () => {
     const testStateKey = randomUUID();
     const session = testSession(testStateKey);
     await storage.set(testStateKey, session);
-    t.deepEqual(await storage.get(testStateKey), session);
+    expect(await storage.get(testStateKey)).toEqual(session);
   });
 
-  test("delete-missing", async (t) => {
+  test("delete-missing", async () => {
     const missingKey = randomUUID();
     await storage.delete(missingKey);
-    t.is(await storage.get(missingKey), undefined);
+    expect(await storage.get(missingKey)).toBeUndefined();
   });
 
-  test("delete-state", async (t) => {
+  test("delete-state", async () => {
     const testStateKey = randomUUID();
     const session = testSession(testStateKey);
     await storage.set(testStateKey, session);
-    t.not(await storage.get(testStateKey), undefined);
+    expect(await storage.get(testStateKey)).not.toBeUndefined();
     await storage.delete(testStateKey);
-    t.is(await storage.get(testStateKey), undefined);
+    expect(await storage.get(testStateKey)).toBeUndefined();
   });
 
-  test("get-empty-code", async (t) => {
+  test("get-empty-code", async () => {
     const missingKey = randomUUID();
-    t.is(await storage.getCode(missingKey), undefined);
+    expect(await storage.getCode(missingKey)).toBeUndefined();
   });
 
-  test("get-and-set-code", async (t) => {
+  test("get-and-set-code", async () => {
     const testStateKey = randomUUID();
     const testCodeKey = randomUUID();
     const session = testSession(testStateKey);
     await storage.set(testStateKey, session);
     await storage.setCode(testCodeKey, session);
-    t.is(await storage.getCode(testCodeKey), testStateKey);
-    t.is((await storage.get(testStateKey))?.code, testCodeKey);
+    expect(await storage.getCode(testCodeKey)).toEqual(testStateKey);
+    expect((await storage.get(testStateKey))?.code).toEqual(testCodeKey);
   });
 
-  test("delete-code", async (t) => {
+  test("delete-code", async () => {
     const testStateKey = randomUUID();
     const testCodeKey = randomUUID();
     const session = testSession(testStateKey);
     await storage.set(testStateKey, session);
     await storage.setCode(testCodeKey, session);
-    t.not(await storage.getCode(testCodeKey), undefined);
+    expect(await storage.getCode(testCodeKey)).not.toBeUndefined();
     await storage.delete(testStateKey);
-    t.is(await storage.get(testStateKey), undefined);
-    t.is(await storage.getCode(testStateKey), undefined);
+    expect(await storage.get(testStateKey)).toBeUndefined();
+    expect(await storage.getCode(testStateKey)).toBeUndefined();
   });
 }
 

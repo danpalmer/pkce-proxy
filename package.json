@@ -2,15 +2,11 @@
   "name": "pkce-proxy",
   "version": "0.1.0",
   "description": "A barebones PKCE proxy to enable OAuth for OAuth providers that do not support PKC",
-  "main": "dist/index.js",
-  "engines": {
-    "node": "20.x"
-  },
   "scripts": {
-    "start": "node .",
-    "build": "tsc && cp -R public dist/",
-    "test": "ava --serial",
-    "benchmark-url-size": "PROXY_HOSTNAME=1 SECRET_KEY=1 node dist/scripts/benchmark-url-size.js"
+    "start": "bun run index.ts",
+    "build": "bun build ./index.ts --outfile=build/bundle.js",
+    "test": "PROXY_HOSTNAME=1 SECRET_KEY=abc123 bun test",
+    "benchmark-url-size": "PROXY_HOSTNAME=1 SECRET_KEY=abc123 bun scripts/benchmark-url-size.js"
   },
   "keywords": [],
   "author": "",
@@ -18,9 +14,9 @@
   "type": "commonjs",
   "devDependencies": {
     "@ava/typescript": "^4.1.0",
-    "@types/node": "^20.12.2",
     "@types/supertest": "^6.0.2",
     "ava": "^6.1.1",
+    "bun-types": "^1.1.2",
     "pino-pretty": "^10.3.1",
     "protobufjs-cli": "~1.1.2",
     "supertest": "^6.3.4",

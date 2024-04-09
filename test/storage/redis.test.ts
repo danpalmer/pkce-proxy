@@ -1,4 +1,4 @@
-import test from "ava";
+import { test } from "bun:test";
 
 import RedisStorage from "../../src/storage/redis";
 import testStorage from "./_common";

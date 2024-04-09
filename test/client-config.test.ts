@@ -1,9 +1,9 @@
-import test from "ava";
+import { expect, test } from "bun:test";
 
 import * as config from "../src/client-config";
 import { FastifyRequest } from "fastify";
 
-test("round-trip-full", (t) => {
+test("round-trip-full", () => {
   const value: config.ClientConfig = {
     clientSecret: "foo",
     authorizeUrl: "https://example.com/authorize",
@@ -15,10 +15,10 @@ test("round-trip-full", (t) => {
 
   const encoded = config.encode(value);
   const decoded = config.decode(encoded);
-  t.deepEqual(value, decoded);
+  expect(decoded).toEqual(value);
 });
 
-test("round-trip-minimal", (t) => {
+test("round-trip-minimal", () => {
   const value: config.ClientConfig = {
     clientSecret: "foo",
     authorizeUrl: "https://example.com/authorize",
@@ -28,10 +28,10 @@ test("round-trip-minimal", (t) => {
 
   const encoded = config.encode(value);
   const decoded = config.decode(encoded);
-  t.deepEqual(value, decoded);
+  expect(decoded).toEqual(value);
 });
 
-test("request-config-full-v1", (t) => {
+test("request-config-full-v1", () => {
   // Warning: This test ensures backwards compatibility. If you need to change
   // this test you have most likely broken backwards compatibility. When adding
   // a new optional field, new tests should be added instead, with the v1 suffix
@@ -44,20 +44,17 @@ test("request-config-full-v1", (t) => {
   };
 
   const value = config.getConfig(req as FastifyRequest);
-  t.deepEqual(
-    {
-      clientSecret: "foo",
-      authorizeUrl: "https://example.com/authorize",
-      tokenUrl: "https://example.com/token",
-      refreshTokenUrl: "https://example.com/refresh",
-      dataType: "json",
-      basicAuthHeader: "Basic YmVlcw==",
-    },
-    value
-  );
+  expect(value).toEqual({
+    clientSecret: "foo",
+    authorizeUrl: "https://example.com/authorize",
+    tokenUrl: "https://example.com/token",
+    refreshTokenUrl: "https://example.com/refresh",
+    dataType: "json",
+    basicAuthHeader: "Basic YmVlcw==",
+  });
 });
 
-test("request-config-minimal-v1", (t) => {
+test("request-config-minimal-v1", () => {
   // Warning: This test ensures backwards compatibility. If you need to change
   // this test you have most likely broken backwards compatibility. When adding
   // a new optional field, new tests should be added instead, with the v1 suffix
@@ -70,7 +67,7 @@ test("request-config-minimal-v1", (t) => {
   };
 
   const value = config.getConfig(req as FastifyRequest);
-  t.deepEqual(
+  expect(value).toEqual(
     {
       clientSecret: "foo",
       authorizeUrl: "https://example.com/authorize",

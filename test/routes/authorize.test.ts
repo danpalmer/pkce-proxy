@@ -1,4 +1,4 @@
-import test from "ava";
+import { expect, test } from "bun:test";
 import supertest from "supertest";
 
 import { server } from "../../src/server";
@@ -15,7 +15,7 @@ import {
   TOKEN_URL,
 } from "./_common";
 
-test("redirects", async (t) => {
+test("redirects", async () => {
   await server.ready();
   const token = createToken();
   const response = await supertest(server.server)
@@ -32,10 +32,10 @@ test("redirects", async (t) => {
       "Location",
       `https://api.example.com/oauth/authorize?client_id=${CLIENT_ID}&state=${TEST_STATE}&redirect_uri=https%3A%2F%2F${PROXY_HOSTNAME}%2Fredirect`
     );
-  t.falsy(response.text);
+  expect(response.text).toBeFalsy();
 });
 
-test("redirects-with-extra-parameters", async (t) => {
+test("redirects-with-extra-parameters", async () => {
   await server.ready();
   const token = createToken();
   const response = await supertest(server.server)
@@ -54,10 +54,10 @@ test("redirects-with-extra-parameters", async (t) => {
       "Location",
       `https://api.example.com/oauth/authorize?client_id=${CLIENT_ID}&state=${TEST_STATE}&foo=bar&baz=quux&redirect_uri=https%3A%2F%2F${PROXY_HOSTNAME}%2Fredirect`
     );
-  t.falsy(response.text);
+  expect(response.text).toBeFalsy();
 });
 
-test("returns-invalid-parameters", async (t) => {
+test("returns-invalid-parameters", async () => {
   await server.ready();
   const token = createToken();
   const response = await supertest(server.server)
@@ -70,7 +70,7 @@ test("returns-invalid-parameters", async (t) => {
       code_challenge_method: CODE_CHALLENGE_METHOD,
     })
     .expect(400);
-  t.deepEqual(JSON.parse(response.text), {
+  expect(JSON.parse(response.text)).toEqual({
     error: "invalid_parameters",
     generated_by: "oauth_pkce_proxy",
     config: {

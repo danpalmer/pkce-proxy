@@ -1,7 +1,6 @@
 import fastify from "fastify";
 import fastifyStatic from "@fastify/static";
 import fastifyFormBody from "@fastify/formbody";
-import fastifyMetrics from "fastify-metrics";
 import path from "path";
 
 import authorize from "./routes/authorize";
@@ -37,8 +36,6 @@ server.register(fastifyStatic, {
   root: path.join(__dirname, "..", "public"),
   prefix: "/public/",
 });
-
-server.register(fastifyMetrics, { endpoint: "/metrics" });
 
 server.register(fastifyFormBody);
 

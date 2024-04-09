@@ -1,12 +1,10 @@
 {
   "compilerOptions": {
-    "baseUrl": "./",
-    "module": "CommonJS",
-    "outDir": "./dist",
-    "strict": true,
-    "target": "ES2021",
-    "esModuleInterop": true,
-    "noUncheckedIndexedAccess": true
+    "lib": ["ESNext"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "target": "ESNext",
+    "types": ["bun-types"]
   },
   "include": ["./index.ts", "./scripts/**/*.ts"],
 }
