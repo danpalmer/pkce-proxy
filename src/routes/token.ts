@@ -15,7 +15,10 @@ export default async function token(req: FastifyRequest, res: FastifyReply) {
       res,
       "invalid_grant",
       /* proxy= */ true,
-      { parsed_request: { code_verifier, client_id, code, ...extra } }
+      {
+        parsed_request: { code_verifier, client_id, code, ...extra },
+        message: "No matching session found for given code.",
+      }
     );
   }
 
