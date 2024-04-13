@@ -237,6 +237,33 @@ test("consumes-session", async () => {
   expect(session).toBeUndefined();
 });
 
+test("passes-auth-header", async () => {
+  let serverAssertion = () => {};
+  const upstreamTokenPath = addHandler("POST", (req, res) => {
+    serverAssertion = () => {
+      expect(req.headers["authorization"]).toEqual("Bearer test");
+    };
+    return res.status(200).send({ token: "test" });
+  });
+
+  const clientToken = createToken({
+    tokenUrl: getFakeServerUrl(upstreamTokenPath),
+    authHeader: "Bearer test",
+  });
+
+  const response = await supertest(server.server)
+    .post(`/${clientToken}/token`)
+    .send({
+      client_id: CLIENT_ID,
+      code_verifier: CODE_VERIFIER,
+      code: CODE,
+    })
+    .set("x-forwarded-proto", "https")
+    .expect(200);
+
+  serverAssertion();
+});
+
 test("fails-gracefully-on-upstream-failure", async () => {
   const upstreamTokenPath = addHandler("POST", (req, res) => {
     return res.status(451).send({ failure: "test" });
