@@ -2,7 +2,6 @@ import { expect, test, beforeAll, beforeEach, afterEach } from "bun:test";
 import supertest from "supertest";
 
 import { server } from "../../src/server";
-import { add, addCode, consume, findByState } from "../../src/sessions";
 import {
   createToken,
   CLIENT_ID,
@@ -13,6 +12,7 @@ import {
   AUTHORIZE_URL,
   CODE,
   CODE_VERIFIER,
+  REFRESH_TOKEN,
   CLIENT_SECRET,
   PROXY_REDIRECT_URL,
   REFRESH_TOKEN_URL,
@@ -29,56 +29,36 @@ beforeAll(async () => {
   await startServer();
 });
 
-beforeEach(async () => {
-  await add(CLIENT_ID, CLIENT_REDIRECT_URL, TEST_STATE, {
-    code_challenge: CODE_CHALLENGE,
-    code_challenge_method: CODE_CHALLENGE_METHOD,
-  });
-  let session = await findByState(TEST_STATE);
-  if (!session) {
-    throw new Error("No session found");
-  }
-  addCode(CODE, session);
-});
-
-afterEach(async () => {
-  const session = await findByState(TEST_STATE);
-  if (session) {
-    await consume(session);
-  }
-});
-
-test("serves-token-json", async () => {
+test("serves-refresh-token-json", async () => {
   let serverAssertion = () => {};
-  const upstreamTokenPath = addHandler("POST", (req, res) => {
+  const upstreamRefreshPath = addHandler("POST", (req, res) => {
     serverAssertion = () => {
       expect(req.body).toEqual({
         client_id: CLIENT_ID,
         client_secret: CLIENT_SECRET,
-        code: CODE,
+        refresh_token: REFRESH_TOKEN,
         redirect_uri: PROXY_REDIRECT_URL,
       });
       expect(req.headers["content-type"]).toEqual("application/json");
     };
-    return res.status(200).send({ token: "test" });
+    return res.status(200).send({ refresh_token: "test" });
   });
 
   const clientToken = createToken({
-    tokenUrl: getFakeServerUrl(upstreamTokenPath),
+    refreshTokenUrl: getFakeServerUrl(upstreamRefreshPath),
     dataType: "json",
   });
 
   const response = await supertest(server.server)
-    .post(`/${clientToken}/token`)
+    .post(`/${clientToken}/refresh-token`)
     .send({
       client_id: CLIENT_ID,
-      code_verifier: CODE_VERIFIER,
-      code: CODE,
+      refresh_token: REFRESH_TOKEN,
     })
     .set("x-forwarded-proto", "https")
     .expect(200);
 
-  expect(JSON.parse(response.text)).toEqual({ token: "test" });
+  expect(JSON.parse(response.text)).toEqual({ refresh_token: "test" });
   expect(response.headers["content-type"]).toEqual(
     "application/json; charset=utf-8"
   );
@@ -86,14 +66,14 @@ test("serves-token-json", async () => {
   serverAssertion();
 });
 
-test("serves-token-form", async () => {
+test("serves-refresh-token-form", async () => {
   let serverAssertion = () => {};
-  const upstreamTokenPath = addHandler("POST", (req, res) => {
+  const upstreamRefreshPath = addHandler("POST", (req, res) => {
     serverAssertion = () => {
       expect(req.body).toEqual({
         client_id: CLIENT_ID,
         client_secret: CLIENT_SECRET,
-        code: CODE,
+        refresh_token: REFRESH_TOKEN,
         redirect_uri: PROXY_REDIRECT_URL,
       });
       expect(req.headers["content-type"]).toEqual(
@@ -107,16 +87,15 @@ test("serves-token-form", async () => {
   });
 
   const clientToken = createToken({
-    tokenUrl: getFakeServerUrl(upstreamTokenPath),
+    refreshTokenUrl: getFakeServerUrl(upstreamRefreshPath),
     dataType: "form",
   });
 
   const response = await supertest(server.server)
-    .post(`/${clientToken}/token`)
+    .post(`/${clientToken}/refresh-token`)
     .send({
       client_id: CLIENT_ID,
-      code_verifier: CODE_VERIFIER,
-      code: CODE,
+      refresh_token: REFRESH_TOKEN,
     })
     .set("x-forwarded-proto", "https")
     .expect(200);
@@ -127,41 +106,40 @@ test("serves-token-form", async () => {
   serverAssertion();
 });
 
-test("serves-token-json-extra", async () => {
+test("serves-refresh-token-json-extra", async () => {
   let serverAssertion = () => {};
-  const upstreamTokenPath = addHandler("POST", (req, res) => {
+  const upstreamRefreshPath = addHandler("POST", (req, res) => {
     serverAssertion = () => {
       expect(req.body).toEqual({
         client_id: CLIENT_ID,
         client_secret: CLIENT_SECRET,
-        code: CODE,
+        refresh_token: REFRESH_TOKEN,
         redirect_uri: PROXY_REDIRECT_URL,
         foo: "bar",
         baz: "quux",
       });
       expect(req.headers["content-type"]).toEqual("application/json");
     };
-    return res.status(200).send({ token: "test" });
+    return res.status(200).send({ refresh_token: "test" });
   });
 
   const clientToken = createToken({
-    tokenUrl: getFakeServerUrl(upstreamTokenPath),
+    refreshTokenUrl: getFakeServerUrl(upstreamRefreshPath),
     dataType: "json",
   });
 
   const response = await supertest(server.server)
-    .post(`/${clientToken}/token`)
+    .post(`/${clientToken}/refresh-token`)
     .send({
       client_id: CLIENT_ID,
-      code_verifier: CODE_VERIFIER,
-      code: CODE,
+      refresh_token: REFRESH_TOKEN,
       foo: "bar",
       baz: "quux",
     })
     .set("x-forwarded-proto", "https")
     .expect(200);
 
-  expect(JSON.parse(response.text)).toEqual({ token: "test" });
+  expect(JSON.parse(response.text)).toEqual({ refresh_token: "test" });
   expect(response.headers["content-type"]).toEqual(
     "application/json; charset=utf-8"
   );
@@ -169,14 +147,14 @@ test("serves-token-json-extra", async () => {
   serverAssertion();
 });
 
-test("serves-token-form-extra", async () => {
+test("serves-refresh-token-form-extra", async () => {
   let serverAssertion = () => {};
-  const upstreamTokenPath = addHandler("POST", (req, res) => {
+  const upstreamRefreshPath = addHandler("POST", (req, res) => {
     serverAssertion = () => {
       expect(req.body).toEqual({
         client_id: CLIENT_ID,
         client_secret: CLIENT_SECRET,
-        code: CODE,
+        refresh_token: REFRESH_TOKEN,
         redirect_uri: PROXY_REDIRECT_URL,
         foo: "bar",
         baz: "quux",
@@ -192,16 +170,15 @@ test("serves-token-form-extra", async () => {
   });
 
   const clientToken = createToken({
-    tokenUrl: getFakeServerUrl(upstreamTokenPath),
+    refreshTokenUrl: getFakeServerUrl(upstreamRefreshPath),
     dataType: "form",
   });
 
   const response = await supertest(server.server)
-    .post(`/${clientToken}/token`)
+    .post(`/${clientToken}/refresh-token`)
     .send({
       client_id: CLIENT_ID,
-      code_verifier: CODE_VERIFIER,
-      code: CODE,
+      refresh_token: REFRESH_TOKEN,
       foo: "bar",
       baz: "quux",
     })
@@ -212,52 +189,27 @@ test("serves-token-form-extra", async () => {
   expect(response.headers["content-type"]).toEqual("text/test");
 
   serverAssertion();
-});
-
-test("consumes-session", async () => {
-  const upstreamTokenPath = addHandler("POST", (req, res) => {
-    return res.status(200).send({ token: "test" });
-  });
-
-  const clientToken = createToken({
-    tokenUrl: getFakeServerUrl(upstreamTokenPath),
-    dataType: "json",
-  });
-
-  await supertest(server.server)
-    .post(`/${clientToken}/token`)
-    .send({
-      client_id: CLIENT_ID,
-      code_verifier: CODE_VERIFIER,
-      code: CODE,
-    })
-    .set("x-forwarded-proto", "https")
-    .expect(200);
-
-  const session = await findByState(TEST_STATE);
-  expect(session).toBeUndefined();
 });
 
 test("passes-auth-header", async () => {
   let serverAssertion = () => {};
-  const upstreamTokenPath = addHandler("POST", (req, res) => {
+  const upstreamRefreshPath = addHandler("POST", (req, res) => {
     serverAssertion = () => {
       expect(req.headers["authorization"]).toEqual("Bearer test");
     };
-    return res.status(200).send({ token: "test" });
+    return res.status(200).send({ refresh_token: "test" });
   });
 
   const clientToken = createToken({
-    tokenUrl: getFakeServerUrl(upstreamTokenPath),
+    refreshTokenUrl: getFakeServerUrl(upstreamRefreshPath),
     authHeader: "Bearer test",
   });
 
   await supertest(server.server)
-    .post(`/${clientToken}/token`)
+    .post(`/${clientToken}/refresh-token`)
     .send({
       client_id: CLIENT_ID,
-      code_verifier: CODE_VERIFIER,
-      code: CODE,
+      refresh_token: REFRESH_TOKEN,
     })
     .set("x-forwarded-proto", "https")
     .expect(200);
@@ -266,21 +218,20 @@ test("passes-auth-header", async () => {
 });
 
 test("fails-gracefully-on-upstream-failure", async () => {
-  const upstreamTokenPath = addHandler("POST", (req, res) => {
+  const upstreamRefreshPath = addHandler("POST", (req, res) => {
     return res.status(451).send({ failure: "test" });
   });
 
   const clientToken = createToken({
-    tokenUrl: getFakeServerUrl(upstreamTokenPath),
+    refreshTokenUrl: getFakeServerUrl(upstreamRefreshPath),
     dataType: "json",
   });
 
   const response = await supertest(server.server)
-    .post(`/${clientToken}/token`)
+    .post(`/${clientToken}/refresh-token`)
     .send({
       client_id: CLIENT_ID,
-      code_verifier: CODE_VERIFIER,
-      code: CODE,
+      refresh_token: REFRESH_TOKEN,
     })
     .set("x-forwarded-proto", "https")
     .expect(451);
@@ -290,14 +241,13 @@ test("fails-gracefully-on-upstream-failure", async () => {
       authorizeUrl: AUTHORIZE_URL,
       clientSecret: "00d34061",
       dataType: "json",
-      refreshTokenUrl: REFRESH_TOKEN_URL,
-      tokenUrl: getFakeServerUrl(upstreamTokenPath),
+      refreshTokenUrl: getFakeServerUrl(upstreamRefreshPath),
+      tokenUrl: TOKEN_URL,
     },
     context: {
       parsed_request: {
         client_id: CLIENT_ID,
-        code: CODE,
-        code_verifier: CODE_VERIFIER,
+        refresh_token: "0a9b110d",
       },
       upstream_response: {
         body: '{"failure":"test"}',
@@ -309,51 +259,12 @@ test("fails-gracefully-on-upstream-failure", async () => {
   });
 });
 
-test("fails-gracefully-with-missing-session", async () => {
-  // Delete the default session
-  const session = await findByState(TEST_STATE);
-  if (session) {
-    await consume(session);
-  }
-
-  const token = createToken();
-  const response = await supertest(server.server)
-    .post(`/${token}/token`)
-    .send({
-      client_id: CLIENT_ID,
-      code_verifier: CODE_VERIFIER,
-      code: CODE,
-    })
-    .set("x-forwarded-proto", "https")
-    .expect(400);
-  expect(JSON.parse(response.text)).toEqual({
-    config: {
-      authorizeUrl: AUTHORIZE_URL,
-      clientSecret: "00d34061",
-      dataType: "json",
-      refreshTokenUrl: REFRESH_TOKEN_URL,
-      tokenUrl: TOKEN_URL,
-    },
-    context: {
-      message: "No matching session found for given code.",
-      parsed_request: {
-        client_id: CLIENT_ID,
-        code: CODE,
-        code_verifier: CODE_VERIFIER,
-      },
-    },
-    error: "invalid_grant",
-    generated_by: "oauth_pkce_proxy",
-  });
-});
-
 test("fails-gracefully-with-missing-query", async () => {
   const token = createToken();
   const response = await supertest(server.server)
-    .post(`/${token}/token`)
+    .post(`/${token}/refresh-token`)
     .send({
-      client_id: CLIENT_ID,
-      code: CODE,
+      refresh_token: REFRESH_TOKEN,
     })
     .set("x-forwarded-proto", "https")
     .expect(400);
@@ -367,8 +278,7 @@ test("fails-gracefully-with-missing-query", async () => {
     },
     context: {
       parsed_request: {
-        client_id: CLIENT_ID,
-        code: CODE,
+        refresh_token: "0a9b110d",
       },
     },
     error: "invalid_parameters",

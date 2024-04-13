@@ -7,6 +7,17 @@ import { descriptiveClientError, descriptiveError } from "../errors";
 export default async function token(req: FastifyRequest, res: FastifyReply) {
   const clientConfig = getConfig(req);
   const { code_verifier, client_id, code, ...extra } = req.body as any;
+  if (!code_verifier || !client_id || !code) {
+    return descriptiveClientError(
+      req,
+      res,
+      "invalid_parameters",
+      /* proxy= */ true,
+      {
+        parsed_request: { code_verifier, client_id, code, ...extra },
+      }
+    );
+  }
 
   const session = await find(code, code_verifier);
   if (!session) {

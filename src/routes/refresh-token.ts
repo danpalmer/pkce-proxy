@@ -15,6 +15,21 @@ export default async function refresh_token(
 ) {
   const clientConfig = getConfig(req);
   const { client_id, refresh_token, ...extra } = req.body as any;
+  if (!client_id || !refresh_token) {
+    return descriptiveClientError(
+      req,
+      res,
+      "invalid_parameters",
+      /* proxy= */ true,
+      {
+        parsed_request: {
+          client_id,
+          refresh_token: redactString(refresh_token),
+          ...extra,
+        },
+      }
+    );
+  }
 
   let options: RequestInit = {};
   if (clientConfig.dataType === "json") {
@@ -72,7 +87,7 @@ export default async function refresh_token(
       req,
       res,
       response.status,
-      await response.json(),
+      "upstream_error",
       false,
       {
         parsed_request: {
@@ -89,5 +104,9 @@ export default async function refresh_token(
   }
 
   res.status(response.status);
-  return response.json();
+  const upstreamContentType = response.headers.get("Content-Type");
+  if (upstreamContentType) {
+    res.header("Content-Type", upstreamContentType);
+  }
+  return response.text();
 }

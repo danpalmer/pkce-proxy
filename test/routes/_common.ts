@@ -15,6 +15,7 @@ export const CLIENT_SECRET =
 export const AUTHORIZE_URL = "https://api.example.com/oauth/authorize";
 export const TOKEN_URL = "https://api.example.com/oauth/token";
 export const REFRESH_TOKEN_URL = "https://api.example.com/oauth/refresh";
+export const REFRESH_TOKEN = "test-refresh-token";
 export const DATA_TYPE = "json";
 export const CLIENT_REDIRECT_URL = "https://client.example.com/redirect";
 export const PROXY_REDIRECT_URL = "https://proxy.dev/redirect";
