@@ -35,6 +35,7 @@ export async function find(
 
   const session = await storage.get(state);
 
+  // TODO: Validate challenge method, throw useful error.
   if (
     session &&
     (session.pkce.code_challenge_method === "plain"

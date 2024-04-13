@@ -35,6 +35,7 @@ const compressionDictionary = Buffer.from(
 );
 
 export function getConfig(req: FastifyRequest): ClientConfig {
+  // TODO: Throw useful error message here if decode fails.
   const clientToken = (req.params as Record<string, string>)
     .clientToken as string;
   return decode(clientToken);
