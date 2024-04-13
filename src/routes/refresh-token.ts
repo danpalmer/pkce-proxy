@@ -18,30 +18,13 @@ export default async function refresh_token(
 
   let options: RequestInit = {};
   if (clientConfig.dataType === "json") {
-    let body: string;
-    try {
-      body = JSON.stringify({
-        client_id,
-        client_secret: clientConfig.clientSecret,
-        refresh_token,
-        ...extra,
-        redirect_uri: PROXY_REDIRECT_URL,
-      });
-    } catch (e) {
-      return descriptiveClientError(
-        req,
-        res,
-        "invalid_grant",
-        /* proxy= */ true,
-        {
-          parsed_request: {
-            client_id,
-            refresh_token: redactString(refresh_token),
-            ...extra,
-          },
-        }
-      );
-    }
+    let body = JSON.stringify({
+      client_id,
+      client_secret: clientConfig.clientSecret,
+      refresh_token,
+      ...extra,
+      redirect_uri: PROXY_REDIRECT_URL,
+    });
 
     options = {
       headers: {

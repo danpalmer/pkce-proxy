@@ -26,24 +26,13 @@ export default async function token(req: FastifyRequest, res: FastifyReply) {
 
   let options: RequestInit = {};
   if (clientConfig.dataType === "json") {
-    let body: string;
-    try {
-      body = JSON.stringify({
-        client_id,
-        client_secret: clientConfig.clientSecret,
-        code,
-        ...extra,
-        redirect_uri: PROXY_REDIRECT_URL,
-      });
-    } catch (e) {
-      return descriptiveClientError(
-        req,
-        res,
-        "invalid_body",
-        /* proxy= */ true,
-        { parsed_request: { code_verifier, client_id, code, ...extra } }
-      );
-    }
+    let body = JSON.stringify({
+      client_id,
+      client_secret: clientConfig.clientSecret,
+      code,
+      ...extra,
+      redirect_uri: PROXY_REDIRECT_URL,
+    });
 
     options = {
       headers: {
