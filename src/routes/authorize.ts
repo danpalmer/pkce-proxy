@@ -44,6 +44,26 @@ export default async function authorize(
     );
   }
 
+  if (code_challenge_method !== "S256" && code_challenge_method !== "plain") {
+    return descriptiveClientError(
+      req,
+      res,
+      "invalid_code_challenge_method",
+      /* proxy= */ true,
+      {
+        parsed_request: {
+          client_id,
+          redirect_uri,
+          code_challenge,
+          code_challenge_method,
+          state,
+          ...extra,
+        },
+        message: "Unsupported challenge method, must be S256 or plain",
+      }
+    );
+  }
+
   try {
     await add(client_id, redirect_uri, state, {
       code_challenge,

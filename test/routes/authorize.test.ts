@@ -94,3 +94,40 @@ test("returns-invalid-parameters", async () => {
     },
   });
 });
+
+test("returns-unsupported-challenge-method", async () => {
+  await server.ready();
+  const token = createToken();
+  const response = await supertest(server.server)
+    .get(`/${token}/authorize`)
+    .query({
+      client_id: CLIENT_ID,
+      redirect_uri: CLIENT_REDIRECT_URL,
+      state: TEST_STATE,
+      code_challenge: CODE_CHALLENGE,
+      code_challenge_method: "S512",
+    })
+    .set("x-forwarded-proto", "https")
+    .expect(400);
+  expect(JSON.parse(response.text)).toEqual({
+    error: "invalid_code_challenge_method",
+    generated_by: "oauth_pkce_proxy",
+    config: {
+      authorizeUrl: AUTHORIZE_URL,
+      clientSecret: "00d34061", // Redacted
+      dataType: "json",
+      refreshTokenUrl: REFRESH_TOKEN_URL,
+      tokenUrl: TOKEN_URL,
+    },
+    context: {
+      message: "Unsupported challenge method, must be S256 or plain",
+      parsed_request: {
+        client_id: CLIENT_ID,
+        code_challenge: CODE_CHALLENGE,
+        code_challenge_method: "S512",
+        redirect_uri: CLIENT_REDIRECT_URL,
+        state: TEST_STATE,
+      },
+    },
+  });
+});
