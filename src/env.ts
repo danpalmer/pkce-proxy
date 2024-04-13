@@ -28,6 +28,4 @@ if (!SECRET_KEY) {
 
 export const REDIS_URL = process.env.REDIS_URL;
 
-export const SESSION_MAX_SECONDS = parseInt(
-  process.env.SESSION_MAX_SECONDS || "300"
-);
+export const SESSION_MAX_MS = parseInt(process.env.SESSION_MAX_MS || "300000");

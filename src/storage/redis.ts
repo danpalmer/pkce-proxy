@@ -1,7 +1,7 @@
 import Redis from "ioredis";
 
 import { Session, SessionStorage } from "./types";
-import { SESSION_MAX_SECONDS } from "../env";
+import { SESSION_MAX_MS } from "../env";
 
 export default class RedisStorage implements SessionStorage {
   client: Redis;
@@ -25,7 +25,7 @@ export default class RedisStorage implements SessionStorage {
       `session:${state}`,
       JSON.stringify(session),
       "EX",
-      SESSION_MAX_SECONDS
+      Math.max(Math.floor(SESSION_MAX_MS / 1000), 1)
     );
   }
 
@@ -34,13 +34,13 @@ export default class RedisStorage implements SessionStorage {
       `code:${code}`,
       session.state,
       "EX",
-      SESSION_MAX_SECONDS
+      Math.max(Math.floor(SESSION_MAX_MS / 1000), 1)
     );
     await this.client.set(
       `session:${session.state}`,
       JSON.stringify({ ...session, code: code }),
       "EX",
-      SESSION_MAX_SECONDS
+      Math.max(Math.floor(SESSION_MAX_MS / 1000), 1)
     );
   }
 

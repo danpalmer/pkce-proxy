@@ -1,6 +1,7 @@
 import { expect, test } from "bun:test";
 import { randomUUID } from "crypto";
 
+import { SESSION_MAX_MS } from "../../src/env";
 import { SessionStorage } from "../../src/storage/types";
 
 export default function testStorage(storage: SessionStorage) {
@@ -56,6 +57,19 @@ export default function testStorage(storage: SessionStorage) {
     await storage.delete(testStateKey);
     expect(await storage.get(testStateKey)).toBeUndefined();
     expect(await storage.getCode(testStateKey)).toBeUndefined();
+  });
+
+  test("expiry", async () => {
+    const testStateKey = randomUUID();
+    const testCodeKey = randomUUID();
+    const session = testSession(testStateKey);
+    await storage.set(testStateKey, session);
+    await storage.setCode(testCodeKey, session);
+
+    await new Promise((resolve) => setTimeout(resolve, 1050));
+
+    expect(await storage.getCode(testCodeKey)).toBeUndefined();
+    expect((await storage.get(testStateKey))?.code).toBeUndefined();
   });
 }
 

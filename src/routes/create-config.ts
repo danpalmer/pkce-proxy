@@ -11,15 +11,17 @@ const template = fs
 
 export default function createConfig(req: FastifyRequest, res: FastifyReply) {
   const form = req.body as Record<string, string>;
+  if (!form || !form.clientSecret || !form.authorizeUrl || !form.tokenUrl) {
+    res.status(400);
+    return { error: "missing_required_parameters" };
+  }
+
   if (
-    !form.clientSecret ||
-    !form.authorizeUrl ||
-    !form.tokenUrl ||
     (form.dataType != "json" && form.dataType != "form" && form.dataType) ||
     (form.authHeader && typeof form.authHeader !== "string")
   ) {
     res.status(400);
-    return { error: "missing_required_params" };
+    return { error: "malformed_parameters" };
   }
 
   const config = {
@@ -36,5 +38,8 @@ export default function createConfig(req: FastifyRequest, res: FastifyReply) {
     .replaceAll("TOKEN", token)
     .replaceAll("PROXY_HOSTNAME", PROXY_HOSTNAME);
 
-  return res.status(201).header("Content-Type", "text/html").send(data);
+  return res
+    .status(201)
+    .header("Content-Type", "text/html; charset=UTF-8")
+    .send(data);
 }

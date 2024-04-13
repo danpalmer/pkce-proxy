@@ -3,7 +3,7 @@ import crypto from "crypto";
 import MemoryStorage from "./storage/memory";
 import RedisStorage from "./storage/redis";
 import { Session } from "./storage/types";
-import { REDIS_URL, SESSION_MAX_SECONDS } from "./env";
+import { REDIS_URL, SESSION_MAX_MS } from "./env";
 
 const storage = REDIS_URL ? new RedisStorage(REDIS_URL) : new MemoryStorage();
 
@@ -18,7 +18,7 @@ export async function add(
     redirect_uri,
     pkce,
     state,
-    expiration: Date.now() + SESSION_MAX_SECONDS * 1000,
+    expiration: Date.now() + SESSION_MAX_MS,
   });
 }
 
