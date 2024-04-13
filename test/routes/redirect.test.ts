@@ -1,4 +1,4 @@
-import { expect, test } from "bun:test";
+import { expect, test, beforeAll, beforeEach, afterEach } from "bun:test";
 import supertest from "supertest";
 
 import { server } from "../../src/server";
@@ -12,13 +12,25 @@ import {
   CODE,
 } from "./_common";
 
-test("redirects", async () => {
+beforeAll(async () => {
   await server.ready();
+});
+
+beforeEach(async () => {
   await add(CLIENT_ID, CLIENT_REDIRECT_URL, TEST_STATE, {
     code_challenge: CODE_CHALLENGE,
     code_challenge_method: CODE_CHALLENGE_METHOD,
   });
+});
 
+afterEach(async () => {
+  const session = await findByState(TEST_STATE);
+  if (session) {
+    await consume(session);
+  }
+});
+
+test("redirects", async () => {
   const response = await supertest(server.server)
     .get(`/redirect`)
     .query({
@@ -32,20 +44,9 @@ test("redirects", async () => {
       `${CLIENT_REDIRECT_URL}?code=${CODE}&state=${TEST_STATE}`
     );
   expect(response.text).toBeFalsy();
-
-  const session = await findByState(TEST_STATE);
-  if (session) {
-    await consume(session);
-  }
 });
 
 test("redirects-with-extra-parameters", async () => {
-  await server.ready();
-  await add(CLIENT_ID, CLIENT_REDIRECT_URL, TEST_STATE, {
-    code_challenge: CODE_CHALLENGE,
-    code_challenge_method: CODE_CHALLENGE_METHOD,
-  });
-
   const response = await supertest(server.server)
     .get(`/redirect`)
     .query({
@@ -61,15 +62,9 @@ test("redirects-with-extra-parameters", async () => {
       `${CLIENT_REDIRECT_URL}?code=${CODE}&state=${TEST_STATE}&foo=bar&baz=quux`
     );
   expect(response.text).toBeFalsy();
-
-  const session = await findByState(TEST_STATE);
-  if (session) {
-    await consume(session);
-  }
 });
 
 test("redirects-with-redirect-uri-with-query", async () => {
-  await server.ready();
   const redirectUri = "https://example.com/redirect?app=123";
   await add(CLIENT_ID, redirectUri, TEST_STATE, {
     code_challenge: CODE_CHALLENGE,
@@ -91,15 +86,15 @@ test("redirects-with-redirect-uri-with-query", async () => {
       `${redirectUri}&code=${CODE}&state=${TEST_STATE}&foo=bar&baz=quux`
     );
   expect(response.text).toBeFalsy();
+});
 
+test("returns-invalid-grant-without-state", async () => {
+  // Delete default session to test for missing state.
   const session = await findByState(TEST_STATE);
   if (session) {
     await consume(session);
   }
-});
 
-test("returns-invalid-grant-without-state", async () => {
-  await server.ready();
   const response = await supertest(server.server)
     .get(`/redirect`)
     .query({
@@ -121,7 +116,6 @@ test("returns-invalid-grant-without-state", async () => {
 });
 
 test("returns-invalid-parameters", async () => {
-  await server.ready();
   const response = await supertest(server.server)
     .get(`/redirect`)
     .query({
