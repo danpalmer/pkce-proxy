@@ -67,13 +67,10 @@ test("request-config-minimal-v1", () => {
   };
 
   const value = config.getConfig(req as FastifyRequest);
-  expect(value).toEqual(
-    {
-      clientSecret: "foo",
-      authorizeUrl: "https://example.com/authorize",
-      tokenUrl: "https://example.com/token",
-      dataType: "json",
-    },
-    value
-  );
+  expect(value).toEqual({
+    clientSecret: "foo",
+    authorizeUrl: "https://example.com/authorize",
+    tokenUrl: "https://example.com/token",
+    dataType: "json",
+  });
 });
