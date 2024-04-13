@@ -98,5 +98,9 @@ export default async function token(req: FastifyRequest, res: FastifyReply) {
   }
 
   res.status(response.status);
-  return response.json();
+  const upstreamContentType = response.headers.get("Content-Type");
+  if (upstreamContentType) {
+    res.header("Content-Type", upstreamContentType);
+  }
+  return response.text();
 }
