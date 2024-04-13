@@ -1,5 +1,6 @@
 import fastify from "fastify";
 import { randomUUID } from "crypto";
+import fastifyFormBody from "@fastify/formbody";
 
 const fakeGetHandlers: Record<string, (request: any, response: any) => any> =
   {};
@@ -7,6 +8,7 @@ const fakePostHandlers: Record<string, (request: any, response: any) => any> =
   {};
 
 const server = fastify()
+  .register(fastifyFormBody)
   .get("/:path", async (request, response) => {
     const path = (request.params as Record<string, string>).path;
     const handler = fakeGetHandlers[path];
