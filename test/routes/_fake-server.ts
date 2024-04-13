@@ -2,21 +2,11 @@ import fastify from "fastify";
 import { randomUUID } from "crypto";
 import fastifyFormBody from "@fastify/formbody";
 
-const fakeGetHandlers: Record<string, (request: any, response: any) => any> =
-  {};
 const fakePostHandlers: Record<string, (request: any, response: any) => any> =
   {};
 
 const server = fastify()
   .register(fastifyFormBody)
-  .get("/:path", async (request, response) => {
-    const path = (request.params as Record<string, string>).path;
-    const handler = fakeGetHandlers[path];
-    if (handler) {
-      return handler(request, response);
-    }
-    response.status(404).send();
-  })
   .post("/:path", async (request, response) => {
     const path = (request.params as Record<string, string>).path;
     const handler = fakePostHandlers[path];
@@ -41,9 +31,7 @@ export function addHandler(
   handler: (request: any, response: any) => any
 ): string {
   const path = randomUUID();
-  if (method === "GET") {
-    fakeGetHandlers[path] = handler;
-  } else if (method === "POST") {
+  if (method === "POST") {
     fakePostHandlers[path] = handler;
   } else {
     throw new Error("Unsupported method");
