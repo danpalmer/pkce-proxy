@@ -18,9 +18,10 @@ export const REFRESH_TOKEN_URL = "https://api.example.com/oauth/refresh";
 export const DATA_TYPE = "json";
 export const CLIENT_REDIRECT_URL = "https://client.example.com/redirect";
 export const TEST_STATE = "ED29ED15-6367-4389-9E08-A87800DA33B3";
-export const CODE = "todo";
-export const CODE_CHALLENGE = "todo";
-export const CODE_CHALLENGE_METHOD = "todo";
+export const CODE = "test-code";
+export const CODE_CHALLENGE = "dGVzdC1jb2RlLXZlcmlmaWVy";
+export const CODE_CHALLENGE_METHOD = "plain";
+export const CODE_VERIFIER = "test-code-verifier";
 
 export function createToken(overrides: ConfigOverrides = {}): string {
   return encode({
