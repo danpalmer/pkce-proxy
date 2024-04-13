@@ -1,4 +1,4 @@
-import { expect, test } from "bun:test";
+import { expect, test, beforeAll } from "bun:test";
 import supertest from "supertest";
 
 import { server } from "../../src/server";
@@ -15,8 +15,11 @@ import {
   TOKEN_URL,
 } from "./_common";
 
-test("redirects", async () => {
+beforeAll(async () => {
   await server.ready();
+});
+
+test("redirects", async () => {
   const token = createToken();
   const response = await supertest(server.server)
     .get(`/${token}/authorize`)
@@ -37,7 +40,6 @@ test("redirects", async () => {
 });
 
 test("redirects-with-extra-parameters", async () => {
-  await server.ready();
   const token = createToken();
   const response = await supertest(server.server)
     .get(`/${token}/authorize`)
@@ -59,8 +61,7 @@ test("redirects-with-extra-parameters", async () => {
   expect(response.text).toBeFalsy();
 });
 
-test("returns-invalid-parameters", async () => {
-  await server.ready();
+test("fails-gracefully-with-invalid-parameters", async () => {
   const token = createToken();
   const response = await supertest(server.server)
     .get(`/${token}/authorize`)
@@ -95,8 +96,7 @@ test("returns-invalid-parameters", async () => {
   });
 });
 
-test("returns-unsupported-challenge-method", async () => {
-  await server.ready();
+test("fails-gracefully-with-unsupported-challenge-method", async () => {
   const token = createToken();
   const response = await supertest(server.server)
     .get(`/${token}/authorize`)
@@ -128,6 +128,21 @@ test("returns-unsupported-challenge-method", async () => {
         redirect_uri: CLIENT_REDIRECT_URL,
         state: TEST_STATE,
       },
+    },
+  });
+});
+
+test("fails-gracefully-with-invalid-client-token", async () => {
+  const response = await supertest(server.server)
+    .get("/invalid-token/authorize")
+    .set("x-forwarded-proto", "https")
+    .expect(400);
+  expect(JSON.parse(response.text)).toEqual({
+    error: "invalid_proxy_configuration_token",
+    generated_by: "oauth_pkce_proxy",
+    context: {
+      token: "invalid-token",
+      error: "Unsupported state or unable to authenticate data",
     },
   });
 });

@@ -34,10 +34,11 @@ export function descriptiveError(
     context: context,
   } as any;
 
-  try {
-    error.config = redactConfig(getConfig(request));
-  } catch (e) {
-    // Not all requests have a config
+  if (errorCode !== "invalid_proxy_configuration_token") {
+    const [clientConfig, _] = getConfig(request, response);
+    if (clientConfig) {
+      error.config = redactConfig(clientConfig);
+    }
   }
 
   return response.status(statusCode).send(error);

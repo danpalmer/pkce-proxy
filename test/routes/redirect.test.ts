@@ -88,7 +88,7 @@ test("redirects-with-redirect-uri-with-query", async () => {
   expect(response.text).toBeFalsy();
 });
 
-test("returns-invalid-grant-without-state", async () => {
+test("fails-gracefully-with-invalid-grant-without-state", async () => {
   // Delete default session to test for missing state.
   const session = await findByState(TEST_STATE);
   if (session) {
@@ -115,7 +115,7 @@ test("returns-invalid-grant-without-state", async () => {
   });
 });
 
-test("returns-invalid-parameters", async () => {
+test("fails-gracefully-with-invalid-parameters", async () => {
   const response = await supertest(server.server)
     .get(`/redirect`)
     .query({

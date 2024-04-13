@@ -375,3 +375,18 @@ test("fails-gracefully-with-missing-query", async () => {
     generated_by: "oauth_pkce_proxy",
   });
 });
+
+test("fails-gracefully-with-invalid-client-token", async () => {
+  const response = await supertest(server.server)
+    .post("/invalid-token/token")
+    .set("x-forwarded-proto", "https")
+    .expect(400);
+  expect(JSON.parse(response.text)).toEqual({
+    error: "invalid_proxy_configuration_token",
+    generated_by: "oauth_pkce_proxy",
+    context: {
+      token: "invalid-token",
+      error: "Unsupported state or unable to authenticate data",
+    },
+  });
+});

@@ -1,8 +1,9 @@
 import { Buffer } from "buffer";
 import * as zlib from "zlib";
-import { FastifyRequest } from "fastify";
+import { FastifyReply, FastifyRequest } from "fastify";
 
 import { decrypt, encrypt } from "./crypto";
+import { descriptiveClientError } from "./errors";
 
 export interface ClientConfig {
   clientSecret: string;
@@ -34,11 +35,33 @@ const compressionDictionary = Buffer.from(
   "https://,json,form,authorize,refresh,token,com,www,api,oauth,Basic,Bearer"
 );
 
-export function getConfig(req: FastifyRequest): ClientConfig {
-  // TODO: Throw useful error message here if decode fails.
+export function getConfig(
+  req: FastifyRequest,
+  res: FastifyReply
+): [ClientConfig, any | undefined] {
   const clientToken = (req.params as Record<string, string>)
     .clientToken as string;
-  return decode(clientToken);
+  if (!clientToken) {
+    return [undefined, undefined];
+  }
+
+  try {
+    return [decode(clientToken), undefined];
+  } catch (e) {
+    return [
+      undefined,
+      descriptiveClientError(
+        req,
+        res,
+        "invalid_proxy_configuration_token",
+        /* proxy= */ true,
+        {
+          token: clientToken,
+          error: e.message,
+        }
+      ),
+    ];
+  }
 }
 
 export function decode(token: string): ClientConfig {

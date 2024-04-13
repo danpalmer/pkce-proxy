@@ -13,7 +13,11 @@ export default async function refresh_token(
   req: FastifyRequest,
   res: FastifyReply
 ) {
-  const clientConfig = getConfig(req);
+  const [clientConfig, configError] = getConfig(req, res);
+  if (configError) {
+    return configError;
+  }
+
   const { client_id, refresh_token, ...extra } = req.body as any;
   if (!client_id || !refresh_token) {
     return descriptiveClientError(

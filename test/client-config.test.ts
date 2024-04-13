@@ -43,7 +43,7 @@ test("request-config-full-v1", () => {
     },
   };
 
-  const value = config.getConfig(req as FastifyRequest);
+  const [value, error] = config.getConfig(req as FastifyRequest, {} as any);
   expect(value).toEqual({
     clientSecret: "foo",
     authorizeUrl: "https://example.com/authorize",
@@ -52,6 +52,7 @@ test("request-config-full-v1", () => {
     dataType: "json",
     authHeader: "Basic YmVlcw==",
   });
+  expect(error).toBeUndefined();
 });
 
 test("request-config-minimal-v1", () => {
@@ -66,11 +67,12 @@ test("request-config-minimal-v1", () => {
     },
   };
 
-  const value = config.getConfig(req as FastifyRequest);
+  const [value, error] = config.getConfig(req as FastifyRequest, {} as any);
   expect(value).toEqual({
     clientSecret: "foo",
     authorizeUrl: "https://example.com/authorize",
     tokenUrl: "https://example.com/token",
     dataType: "json",
   });
+  expect(error).toBeUndefined();
 });

@@ -8,7 +8,10 @@ export default async function authorize(
   req: FastifyRequest,
   res: FastifyReply
 ) {
-  const clientConfig = getConfig(req);
+  const [clientConfig, configError] = getConfig(req, res);
+  if (configError) {
+    return configError;
+  }
 
   const {
     client_id,
