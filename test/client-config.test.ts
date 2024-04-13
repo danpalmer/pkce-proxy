@@ -10,7 +10,7 @@ test("round-trip-full", () => {
     tokenUrl: "https://example.com/token",
     refreshTokenUrl: "https://example.com/refresh",
     dataType: "json",
-    basicAuthHeader: "Basic YmVlcw==",
+    authHeader: "Basic YmVlcw==",
   };
 
   const encoded = config.encode(value);
@@ -50,7 +50,7 @@ test("request-config-full-v1", () => {
     tokenUrl: "https://example.com/token",
     refreshTokenUrl: "https://example.com/refresh",
     dataType: "json",
-    basicAuthHeader: "Basic YmVlcw==",
+    authHeader: "Basic YmVlcw==",
   });
 });
 

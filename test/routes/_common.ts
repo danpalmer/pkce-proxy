@@ -6,7 +6,7 @@ export interface ConfigOverrides {
   tokenUrl?: string;
   refreshTokenUrl?: string;
   dataType?: "json" | "form";
-  basicAuthHeader?: string;
+  authHeader?: string;
 }
 
 export const CLIENT_ID = "DC207A4D-4E83-433D-8C00-64E27A91E072";
@@ -31,6 +31,6 @@ export function createToken(overrides: ConfigOverrides = {}): string {
     tokenUrl: overrides.tokenUrl || TOKEN_URL,
     refreshTokenUrl: overrides.refreshTokenUrl || REFRESH_TOKEN_URL,
     dataType: overrides.dataType || DATA_TYPE,
-    basicAuthHeader: overrides.basicAuthHeader,
+    authHeader: overrides.authHeader,
   });
 }

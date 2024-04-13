@@ -10,7 +10,7 @@ export interface ClientConfig {
   tokenUrl: string;
   refreshTokenUrl?: string;
   dataType?: "json" | "form";
-  basicAuthHeader?: string;
+  authHeader?: string;
 }
 
 // Transforming to these parameters in the serialised form doesn't contribute
@@ -23,7 +23,7 @@ const parameterMap = {
   tokenUrl: "c",
   refreshTokenUrl: "d",
   dataType: "e",
-  basicAuthHeader: "f",
+  authHeader: "f",
 };
 
 const encoder = new TextEncoder();
@@ -81,8 +81,8 @@ function decodeParameters(obj: Record<string, string>): ClientConfig {
   if (obj[parameterMap["refreshTokenUrl"]]) {
     config.refreshTokenUrl = obj[parameterMap["refreshTokenUrl"]];
   }
-  if (obj[parameterMap["basicAuthHeader"]]) {
-    config.basicAuthHeader = obj[parameterMap["basicAuthHeader"]];
+  if (obj[parameterMap["authHeader"]]) {
+    config.authHeader = obj[parameterMap["authHeader"]];
   }
 
   return config;

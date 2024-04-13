@@ -60,10 +60,10 @@ export default async function token(req: FastifyRequest, res: FastifyReply) {
     };
   }
 
-  if (clientConfig.basicAuthHeader) {
+  if (clientConfig.authHeader) {
     options.headers = {
       ...options.headers,
-      Authorization: clientConfig.basicAuthHeader,
+      Authorization: clientConfig.authHeader,
     };
   }
 

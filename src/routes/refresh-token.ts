@@ -52,10 +52,10 @@ export default async function refresh_token(
     };
   }
 
-  if (clientConfig.basicAuthHeader) {
+  if (clientConfig.authHeader) {
     options.headers = {
       ...options.headers,
-      Authorization: clientConfig.basicAuthHeader,
+      Authorization: clientConfig.authHeader,
     };
   }
 
