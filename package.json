@@ -1,13 +1,7 @@
 {
   "name": "pkce-proxy",
   "version": "0.1.0",
-  "description": "A barebones PKCE proxy to enable OAuth for OAuth providers that do not support PKC",
-  "scripts": {
-    "start": "bun run index.ts --env-file=.env.local",
-    "build": "bun build ./index.ts --target bun",
-    "test": "bun test --env-file=.env.local",
-    "benchmark-url-size": "bun scripts/benchmark-url-size.ts --env-file=.env.local"
-  },
+  "description": "A proxy to enable the PKCE flow for OAuth providers that do not support it",
   "keywords": [],
   "author": "",
   "license": "MIT",

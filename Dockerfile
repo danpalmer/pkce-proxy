@@ -1,5 +1,5 @@
 FROM oven/bun:slim as base
-WORKDIR /usr/src/app
+WORKDIR /app
 
 # install dependencies into temp directory
 # this will cache them and speed up future builds
@@ -19,18 +19,20 @@ FROM base AS prerelease
 COPY --from=install /temp/dev/node_modules node_modules
 COPY . .
 
-# test & build
+# test
 ENV NODE_ENV=production
 RUN bun test --env-file=.env.test
-RUN bun run build --target bun
 
 # copy production dependencies and source code into final image
 FROM base AS release
 COPY --from=install /temp/prod/node_modules node_modules
-COPY --from=prerelease /usr/src/app/index.ts .
-COPY --from=prerelease /usr/src/app/package.json .
+COPY --from=prerelease /app/index.ts .
+COPY --from=prerelease /app/src src
+COPY --from=prerelease /app/public public
+COPY --from=prerelease /app/package.json .
 
 # run the app
 USER bun
 EXPOSE 5000/tcp
+ENV NODE_ENV=production
 ENTRYPOINT [ "bun", "run", "index.ts" ]
