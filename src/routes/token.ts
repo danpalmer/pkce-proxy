@@ -85,7 +85,7 @@ export default async function token(req: FastifyRequest, res: FastifyReply) {
       req,
       res,
       response.status,
-      await response.json(),
+      "upstream_error",
       false,
       {
         parsed_request: { code_verifier, client_id, code, ...extra },
