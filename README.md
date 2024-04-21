@@ -44,12 +44,14 @@ store this temporary data instead, making scale-out and re-deployment easier.
 ## Running Locally
 
 ```sh
-npm install
-npm run build
-npm test && npm start
+bun install
+scripts/build
+scripts/test
+scripts/run
 ```
 
 The proxy should now be running on [localhost:5000](http://localhost:5000/).
+`pkce-proxy` is designed to run under Bun for simplicity.
 
 ## Contributions
 
