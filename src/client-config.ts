@@ -38,7 +38,7 @@ const compressionDictionary = Buffer.from(
 export function getConfig(
   req: FastifyRequest,
   res: FastifyReply
-): [ClientConfig, any | undefined] {
+): [ClientConfig | undefined, any | undefined] {
   const clientToken = (req.params as Record<string, string>)
     .clientToken as string;
   if (!clientToken) {
